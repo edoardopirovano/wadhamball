@@ -1,0 +1,31 @@
+@(emailForm: Form[Email])(implicit flash: play.api.mvc.Flash, messages: Messages)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) } 
+
+@main {
+    
+    <h1>Subscribe to mailing list</h1>
+
+    @flash.get("success").map { message =>
+        <div class="alert-message warning">
+            <strong>Done!</strong> @message
+        </div>
+    }
+    
+    @form(routes.Application.subscribe()) {
+        
+        <fieldset>
+        
+            @inputText(emailForm("email"), '_label -> "Email")
+
+        </fieldset>
+        
+        <div class="actions">
+            <input type="submit" value="Subscribe" class="btn primary">
+        </div>
+        
+    }
+    
+}

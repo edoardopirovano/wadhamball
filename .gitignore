@@ -1,17 +1,25 @@
-*.class
-*.log
 
-# sbt specific
+*.log
 .cache
-.history
 .lib/
 dist/*
-target/
 lib_managed/
 src_managed/
 project/boot/
 project/plugins/project/
-
-# Scala-IDE specific
 .scala_dependencies
 .worksheet
+/.sbtserver
+logs
+project/project
+target
+tmp
+dist
+/.idea
+/*.iml
+/out
+/.idea_modules
+/.classpath
+/.project
+/RUNNING_PID
+/.settings
