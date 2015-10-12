@@ -17,6 +17,7 @@ import scala.concurrent.Future
 class Application @Inject() (emailsDAO: EmailsDAO, val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
   val Home = Redirect(routes.Application.home())
+  val Subscribe = Redirect(routes.Application.subscription())
 
   val emailForm = Form(
     mapping(
@@ -30,22 +31,26 @@ class Application @Inject() (emailsDAO: EmailsDAO, val messagesApi: MessagesApi)
   def index = Action { Home }
 
   def home = Action.async { implicit rs =>
-    Future { Ok(html.home(emailForm)) }
+    Future { Ok(html.main())}
+  }
+
+  def subscription = Action.async { implicit rs =>
+    Future { Ok(html.subscription(emailForm)) }
   }
 
   def subscribe = Action.async { implicit rs =>
     emailForm.bindFromRequest.fold(
-      formWithErrors => Future { BadRequest(html.home(formWithErrors)) },
+      formWithErrors => Future { BadRequest(html.subscription(formWithErrors)) },
       email => {
         for {
           _ <- emailsDAO.insert(email)
-        } yield Home.flashing("success" -> "Email %s has been added".format(email.email))
+        } yield Subscribe.flashing("success" -> "Email %s has been added".format(email.email))
       })
   }
 
   def unsubscribe(email: String) = Action.async { implicit rs =>
      for {
           _ <- emailsDAO.remove(email)
-     } yield Home.flashing("success" -> "Email %s has been unsubscribed".format(email))
+     } yield Subscribe.flashing("success" -> "Email %s has been unsubscribed".format(email))
   }
 }

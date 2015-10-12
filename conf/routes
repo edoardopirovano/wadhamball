@@ -5,6 +5,7 @@
 # Default path will just redirect to the computer list
 GET        /                    controllers.Application.index
 GET        /home                controllers.Application.home
+GET        /subscription        controllers.Application.subscription
 GET        /subscribe           controllers.Application.subscribe
 GET        /unsubscribe         controllers.Application.unsubscribe(email: String)
 
