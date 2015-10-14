@@ -19,7 +19,7 @@ scalacOptions in Test ++= Seq("-Yrangepos")
 
 fork in Test := false
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+lazy val root = (project in file(".")).enablePlugins(PlayScala, JavaServerAppPackaging)
 
 // LESS files starting with an underscore are partial less files and should not be compiles
 // (They are imported by other stylesheets)
