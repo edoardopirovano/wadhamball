@@ -1,6 +1,6 @@
 name := """wadhamball"""
 
-version := "1.0-SNAPSHOT"
+version := "1.0"
 
 scalaVersion := "2.11.5"
 
@@ -26,3 +26,22 @@ lazy val root = (project in file(".")).enablePlugins(PlayScala, JavaServerAppPac
 includeFilter in (Assets, LessKeys.less) := "*.less"
 
 excludeFilter in (Assets, LessKeys.less) := "_*.less"
+
+javaOptions in Universal ++= Seq(
+  "-J-Xmx6g",
+  "-J-Xms1g",
+  // Since play uses separate pidfile we have to provide it with a proper path
+  s"-Dpidfile.path=/var/run/${packageName.value}/play.pid",
+  // Use separate configuration file for production environment
+  s"-Dconfig.file=/usr/share/${packageName.value}/conf/production.conf"
+)
+
+maintainer in Linux := "Edoardo Pirovano <edododo_do@yahoo.com>"
+
+packageSummary in Linux := "Wadham ball website"
+
+rpmVendor := "Wadham Ball Committee"
+
+rpmLicense := Some("MIT")
+
+packageDescription := "The website for the Wadham Ball 2016"
