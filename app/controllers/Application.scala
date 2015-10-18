@@ -1,20 +1,33 @@
 package controllers
 
+import java.security.SecureRandom
 import java.sql.Timestamp
+import java.util.UUID
 import javax.inject.Inject
 import dao.EmailsDAO
 import models.Email
+import org.apache.commons.lang3.RandomStringUtils
 import play.api.data.Form
 import play.api.data.Forms.{mapping, email}
 import play.api.i18n.{MessagesApi, I18nSupport}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.{Action, Controller}
 import views.html
+import wrapper.Mailer
 
-import scala.concurrent.Future
+import play.api._
+import play.api.mvc._
+import play.api.data._
+import play.api.data.Forms._
+
+import views._
+import models._
+
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.Duration
 
 /** Manage a database of computers. */
-class Application @Inject() (emailsDAO: EmailsDAO, val messagesApi: MessagesApi) extends Controller with I18nSupport {
+class Application @Inject() (emailsDAO: EmailsDAO, mailer: Mailer, val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
   val Home = Redirect(routes.Application.home())
   val Subscribe = Redirect(routes.Application.subscription())
@@ -25,6 +38,17 @@ class Application @Inject() (emailsDAO: EmailsDAO, val messagesApi: MessagesApi)
     )
       ((x:String) => new Email(x, new Timestamp(System.currentTimeMillis())))
       ((x:Email) => Option(x.email)))
+
+//  val sendForm = Form(
+//    mapping(
+//      "subject" -> nonEmptyText,
+//      "content" -> nonEmptyText,
+//      "email" -> email
+//    )
+//  ((subject: String, content: String, email: String) => {
+//    val approvalId = RandomStringUtils.randomAlphanumeric(20)
+//    new SendRequest(None, subject, content, email, approvalId, false)
+//  })((x:SendRequest) => Option(x.subject, x.content, x.email)))
 
   // -- Actions
 
@@ -48,9 +72,21 @@ class Application @Inject() (emailsDAO: EmailsDAO, val messagesApi: MessagesApi)
       })
   }
 
-  def unsubscribe(email: String) = Action.async { implicit rs =>
-     for {
-          _ <- emailsDAO.remove(email)
-     } yield Subscribe.flashing("success" -> "Email %s has been unsubscribed".format(email))
+  def unsubscribe(recipient: String) = Action { request =>
+    Await.result(emailsDAO.remove(recipient), Duration.Inf)
+    Ok("Successfully unsubscribed")
+  }
+
+  def sendmail = Action.async{ implicit rs =>
+    Future { Ok(html.sendmail()) }
+  }
+
+  def sendpreview(subject: String, content: String) = Action { request =>
+    val response = mailer.sendMail(Await.result(emailsDAO.getAll, Duration.Inf).map(email => email.email), subject, content)
+    if (!Await.result(response, Duration.Inf)) {
+      Logger.error("Failed to send an email!")
+      Redirect(routes.Application.sendmail()).flashing("failure" -> "Message failed to send")
+    }
+    else Redirect(routes.Application.sendmail()).flashing("success" -> "Message sent")
   }
 }

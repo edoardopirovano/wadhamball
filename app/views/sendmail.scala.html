@@ -1,0 +1,36 @@
+@()(implicit flash: play.api.mvc.Flash)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+<!DOCTYPE html>
+<html>
+    <head><!-- CDN hosted by Cachefly -->
+        <script src="//tinymce.cachefly.net/4.2/tinymce.min.js"></script>
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <script>
+        tinymce.init({
+            selector:'textarea',
+            menubar: "edit insert view format table tools"
+        });
+        beforeSubmit = function() {
+            tinyMCE.triggerSave();
+            return true;
+        }
+        </script>
+    </head>
+    <body>
+        @flash.get("success").map { message =>
+            <div>
+                <strong>Succeeded:</strong> @message
+            </div>
+        }
+        <form method="get" action="/admin/sendpreview" onsubmit="beforeSubmit()">
+            Subject: <input type="text" name="subject" size="100"><br><br>
+            <textarea rows="30" name="content">Enter the email you wish to send here</textarea><br><br>
+            <input type="submit" value="Send Preview" class="btn primary">
+        </form>
+    </body>
+</html>
