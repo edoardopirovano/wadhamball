@@ -34,14 +34,14 @@ class Mailer @Inject()(implicit executionContext: ExecutionContext) {
       |
     """.stripMargin
 
-  def sendMail(targets: Seq[String], subject: String, content: String) = {
+  def sendMail(targets: Seq[String], subject: String, content: String): Future[Boolean] = {
     Future.reduce(targets
       .grouped(900)
       .map((emails:Seq[String]) => doSend(emails, subject, content))
     )(_ && _)
   }
 
-  def doSend(emails: Seq[String], subject: String, content: String) = {
+  def doSend(emails: Seq[String], subject: String, content: String): Future[Boolean] = {
     WS.url("https://api.mailgun.net/v3/" + server + "/messages")
       .withAuth("api", apiKey, WSAuthScheme.BASIC)
       .withRequestTimeout(timeout)
