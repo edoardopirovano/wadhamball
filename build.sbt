@@ -9,6 +9,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-slick-evolutions" % "1.0.1",
   "com.h2database" % "h2" % "1.4.189",
   "org.postgresql" % "postgresql" % "9.4-1204-jdbc42",
+  "com.braintreepayments.gateway" % "braintree-java" % "2.52.0",
   ws
 )
 
