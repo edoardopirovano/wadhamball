@@ -29,6 +29,9 @@ class Braintree @Inject()(implicit executionContext: ExecutionContext) {
       new TransactionRequest()
         .amount(new BigDecimal(amount))
         .paymentMethodNonce(nonce)
+        .options()
+          .submitForSettlement(true)
+          .done()
     )
     .isSuccess
 }
