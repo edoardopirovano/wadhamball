@@ -1,4 +1,4 @@
-@()(implicit flash: play.api.mvc.Flash)
+@(emailForm: Form[SendEmail])(implicit flash: play.api.mvc.Flash, messages: Messages)
 
 @import helper._
 
@@ -27,10 +27,12 @@
                 <strong>Succeeded:</strong> @message
             </div>
         }
-        <form method="get" action="/admin/sendpreview" onsubmit="beforeSubmit()">
-            Subject: <input type="text" name="subject" size="100"><br><br>
-            <textarea rows="30" name="content">Enter the email you wish to send here</textarea><br><br>
-            <input type="submit" value="Send Preview" class="btn primary">
-        </form>
+        @form(routes.Application.sendnews()) {
+            @inputText(emailForm("subject"), '_label -> "Subject")
+            @textarea(emailForm("content"), '_label -> "Content")
+            <div class="actions">
+                <input type="submit" value="Send Email" class="btn primary">
+            </div>
+        }
     </body>
 </html>

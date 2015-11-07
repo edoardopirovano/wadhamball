@@ -31,6 +31,7 @@ class Application @Inject() (emailsDAO: EmailsDAO, mailer: Mailer, val messagesA
 
   val Home = Redirect(routes.Application.home())
   val Subscribe = Redirect(routes.Application.subscription())
+  val EmailSend = Redirect(routes.Application.sendmail())
 
   val emailForm = Form(
     mapping(
@@ -38,6 +39,12 @@ class Application @Inject() (emailsDAO: EmailsDAO, mailer: Mailer, val messagesA
     )
       ((x:String) => new Email(x, new Timestamp(System.currentTimeMillis())))
       ((x:Email) => Option(x.email)))
+
+  val emailSendForm = Form(
+    mapping(
+      "subject" -> nonEmptyText(1, 100),
+      "content" -> nonEmptyText
+    )(SendEmail.apply)(SendEmail.unapply))
 
 //  val sendForm = Form(
 //    mapping(
@@ -78,15 +85,20 @@ class Application @Inject() (emailsDAO: EmailsDAO, mailer: Mailer, val messagesA
   }
 
   def sendmail = Action.async{ implicit rs =>
-    Future { Ok(html.sendmail()) }
+    Future { Ok(html.sendmail(emailSendForm)) }
   }
 
-  def sendpreview(subject: String, content: String) = Action { request =>
-    val response = mailer.sendMail(Await.result(emailsDAO.getAll, Duration.Inf).map(email => email.email), subject, content)
-    if (!Await.result(response, Duration.Inf)) {
-      Logger.error("Failed to send an email!")
-      Redirect(routes.Application.sendmail()).flashing("failure" -> "Message failed to send")
-    }
-    else Redirect(routes.Application.sendmail()).flashing("success" -> "Message sent")
+  def sendnews = Action.async { implicit rs =>
+    emailSendForm.bindFromRequest.fold(
+      formWithErrors => Future { BadRequest(html.sendmail(formWithErrors)) },
+      emailRequest => {
+        val response = mailer.sendMail(Await.result(emailsDAO.getAll, Duration.Inf).map(email => email.email), emailRequest.subject, emailRequest.content, true)
+        if (!Await.result(response, Duration.Inf)) {
+          Logger.error("Failed to send an email!")
+          Future { EmailSend.flashing("failure" -> "Message failed to send") }
+        }
+        else Future { EmailSend.flashing("success" -> "Message sent") }
+      }
+    )
   }
 }

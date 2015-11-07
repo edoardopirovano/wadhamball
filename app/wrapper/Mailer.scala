@@ -34,14 +34,14 @@ class Mailer @Inject()(implicit executionContext: ExecutionContext) {
       |
     """.stripMargin
 
-  def sendMail(targets: Seq[String], subject: String, content: String): Future[Boolean] = {
+  def sendMail(targets: Seq[String], subject: String, content: String, unsub: Boolean): Future[Boolean] = {
     Future.reduce(targets
       .grouped(900)
-      .map((emails:Seq[String]) => doSend(emails, subject, content))
+      .map((emails:Seq[String]) => doSend(emails, subject, content, unsub))
     )(_ && _)
   }
 
-  def doSend(emails: Seq[String], subject: String, content: String): Future[Boolean] = {
+  def doSend(emails: Seq[String], subject: String, content: String, unsub: Boolean): Future[Boolean] = {
     WS.url("https://api.mailgun.net/v3/" + server + "/messages")
       .withAuth("api", apiKey, WSAuthScheme.BASIC)
       .withRequestTimeout(timeout)
@@ -49,8 +49,8 @@ class Mailer @Inject()(implicit executionContext: ExecutionContext) {
       "subject" -> Seq(subject),
       "from" -> Seq(fromName + " <" + fromEmail + ">"),
       "to" -> emails,
-      "html" -> Seq(content + UNSUB_STRING),
-      "o:tag" -> Seq("newsletter")
+      "html" -> Seq(content + (if (unsub) UNSUB_STRING else "")),
+      "o:tag" -> (if (unsub) Seq("newsletter") else Seq())
     ))
     .map(response => response.status == 200)
   }

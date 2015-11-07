@@ -12,7 +12,7 @@ GET         /register              controllers.RegistrationController.register
 GET         /pay                   controllers.Payment.pay
 GET         /checkout              controllers.Payment.checkout(payment_method_nonce: String)
 GET         /admin/sendmail        controllers.Application.sendmail
-GET         /admin/sendpreview     controllers.Application.sendpreview(subject: String, content: String)
+POST        /admin/sendnews        controllers.Application.sendnews
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file          controllers.Assets.at(path="/public", file)
