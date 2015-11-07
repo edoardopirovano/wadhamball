@@ -49,6 +49,7 @@ class Mailer @Inject()(implicit executionContext: ExecutionContext) {
       "subject" -> Seq(subject),
       "from" -> Seq(fromName + " <" + fromEmail + ">"),
       "to" -> emails,
+      "recipient-variables" -> Seq("{" + emails.map((email: String) => "\"" + email + "\": {}").mkString(",") + "}"),
       "html" -> Seq(content + (if (unsub) UNSUB_STRING else "")),
       "o:tag" -> (if (unsub) Seq("newsletter") else Seq())
     ))
