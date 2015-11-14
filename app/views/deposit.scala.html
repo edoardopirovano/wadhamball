@@ -5,34 +5,33 @@
 @implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) } 
 
 @template {
-    
-    <h1>Register your tickets</h1>
 
-    @flash.get("success").map { message =>
-        <div class="alert-message warning">
-            <strong>Done!</strong> @message
-        </div>
-    }
-    
-    @form(routes.Deposit.doDeposit()) {
-        
-        <fieldset>
-            @inputText(registrationForm("firstName"), '_label -> "First Name")
-            @inputText(registrationForm("lastName"), '_label -> "Last Name")
-            @inputText(registrationForm("email"), '_label -> "Email")
-            <div id="payment-form"></div>
-        </fieldset>
-        
-        <div class="actions">
-            <input type="submit" value="Register" class="btn primary">
-        </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-8 text-center">
 
-        <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
-        <script>
-        braintree.setup("@clientToken", "dropin", {
-          container: "payment-form"
-        });
-        </script>
-    }
+                @form(routes.Deposit.doDeposit()) {
+
+                    <fieldset>
+                        @inputText(registrationForm("firstName"), '_label -> "First Name", '_showConstraints -> false)
+                        @inputText(registrationForm("lastName"), '_label -> "Last Name", '_showConstraints -> false)
+                        @inputText(registrationForm("email"), '_label -> "Wadham Email", '_showConstraints -> false)
+                        <div id="payment-form"></div>
+                    </fieldset>
+
+                    <div class="actions">
+                        <input type="submit" value="Register" class="btn primary">
+                    </div>
+
+                    <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+                    <script>
+                    braintree.setup("@clientToken", "dropin", {
+                      container: "payment-form"
+                    });
+                    </script>
+                }
+            </div>
+        </div>
+    </div>
     
 }

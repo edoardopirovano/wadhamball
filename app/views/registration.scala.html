@@ -13,25 +13,25 @@
             <strong>Done!</strong> @message
         </div>
     }
-    
-    @form(routes.RegistrationController.register()) {
-        
-        <fieldset>
-            @inputText(registrationForm("firstName"), '_label -> "First Name")
-            @inputText(registrationForm("lastName"), '_label -> "Last Name")
-            @inputText(registrationForm("email"), '_label -> "Email")
-            @checkbox(registrationForm("isWadham"),
-                '_label -> "Wadham Student?")
-            @helper.input(registrationForm("numberOfGuests"), '_label -> "Number of Guests") { (id, name, value, args) =>
-                <input type="number" min="0" max ="3" name="@name" id="@id" @toHtmlArgs(args)>
-            }
 
-        </fieldset>
-        
-        <div class="actions">
-            <input type="submit" value="Register" class="btn primary">
-        </div>
+    @*@form(routes.RegistrationController.register()) {*@
+        @**@
+        @*<fieldset>*@
+            @*@inputText(registrationForm("firstName"), '_label -> "First Name")*@
+            @*@inputText(registrationForm("lastName"), '_label -> "Last Name")*@
+            @*@inputText(registrationForm("email"), '_label -> "Email")*@
+            @*@checkbox(registrationForm("isWadham"),*@
+                @*'_label -> "Wadham Student?")*@
+            @*@helper.input(registrationForm("numberOfGuests"), '_label -> "Number of Guests") { (id, name, value, args) =>*@
+                @*<input type="number" min="0" max ="3" name="@name" id="@id" @toHtmlArgs(args)>*@
+            @*}*@
 
-    }
+        @*</fieldset>*@
+        @**@
+        @*<div class="actions">*@
+            @*<input type="submit" value="Register" class="btn primary">*@
+        @*</div>*@
+
+    @*}*@
     
 }

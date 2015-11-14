@@ -8,11 +8,8 @@ GET         /home                  controllers.Application.home
 GET         /subscription          controllers.Application.subscription
 GET         /subscribe             controllers.Application.subscribe
 POST        /unsubscribe           controllers.Application.unsubscribe(recipient: String)
-GET         /register              controllers.RegistrationController.register
 GET         /deposit               controllers.Deposit.deposit
-GET         /doDeposit             controllers.Deposit.doDeposit
-GET         /pay                   controllers.Payment.pay
-GET         /checkout              controllers.Payment.checkout(payment_method_nonce: String)
+POST        /deposit               controllers.Deposit.doDeposit
 GET         /admin/sendmail        controllers.Application.sendmail
 POST        /admin/sendnews        controllers.Application.sendnews
 

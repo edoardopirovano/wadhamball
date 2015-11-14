@@ -20,6 +20,8 @@ import models.Ticket
 
 class Deposit @Inject() (ticketDAO: TicketDAO, val braintree: Braintree, val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
+  private final val timestamp: Timestamp = new Timestamp(1456790400)
+
   val depositForm = Form(
     mapping(
       "firstName" -> nonEmptyText(1, 50),
@@ -41,7 +43,7 @@ class Deposit @Inject() (ticketDAO: TicketDAO, val braintree: Braintree, val mes
             BadRequest(html.deposit(depositForm.withError("failedPayment", "Payment failed to execute."), braintree.getToken))
           }
         } else {
-          ticketDAO.insert(new Ticket(depositRequest.firstName, depositRequest.lastName, depositRequest.email, true, new Timestamp(1456790400)))
+          ticketDAO.insert(new Ticket(depositRequest.firstName, depositRequest.lastName, depositRequest.email, true, timestamp))
           Future {
             Ok(html.didDeposit())
           }
