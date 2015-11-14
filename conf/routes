@@ -9,6 +9,8 @@ GET         /subscription          controllers.Application.subscription
 GET         /subscribe             controllers.Application.subscribe
 POST        /unsubscribe           controllers.Application.unsubscribe(recipient: String)
 GET         /register              controllers.RegistrationController.register
+GET         /deposit               controllers.Deposit.deposit
+GET         /doDeposit             controllers.Deposit.doDeposit
 GET         /pay                   controllers.Payment.pay
 GET         /checkout              controllers.Payment.checkout(payment_method_nonce: String)
 GET         /admin/sendmail        controllers.Application.sendmail

@@ -1,4 +1,4 @@
-@(registrationForm: Form[Registration])(implicit flash: play.api.mvc.Flash, messages: Messages)
+@(registrationForm: Form[DepositForm], clientToken: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
 
 @import helper._
 
@@ -14,24 +14,25 @@
         </div>
     }
     
-    @form(routes.RegistrationController.register()) {
+    @form(routes.Deposit.doDeposit()) {
         
         <fieldset>
             @inputText(registrationForm("firstName"), '_label -> "First Name")
             @inputText(registrationForm("lastName"), '_label -> "Last Name")
             @inputText(registrationForm("email"), '_label -> "Email")
-            @checkbox(registrationForm("isWadham"),
-                '_label -> "Wadham Student?")
-            @helper.input(registrationForm("numberOfGuests"), '_label -> "Number of Guests") { (id, name, value, args) =>
-                <input type="number" min="0" max ="3" name="@name" id="@id" @toHtmlArgs(args)>
-            }
-
+            <div id="payment-form"></div>
         </fieldset>
         
         <div class="actions">
             <input type="submit" value="Register" class="btn primary">
         </div>
 
+        <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+        <script>
+        braintree.setup("@clientToken", "dropin", {
+          container: "payment-form"
+        });
+        </script>
     }
     
 }

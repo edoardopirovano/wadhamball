@@ -10,8 +10,8 @@ case class SendEmail(subject: String, content: String)
 // TODO
 case class Order()
 
-// TODO
-case class Ticket()
+case class Ticket(firstName: String, lastName: String, email: String, depositOnly: Boolean, payby: Timestamp)
 
-// TODO
 case class Registration(firstName: String, lastName: String, email:String, isWadham: Boolean, numberOfGuests: Int)
+
+case class DepositForm(firstName: String, lastName: String, email:String, payment_method_nonce: String)
