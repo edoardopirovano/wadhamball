@@ -5,18 +5,18 @@ import javax.inject.{Inject, Singleton}
 
 import com.braintreegateway.{TransactionRequest, Environment, BraintreeGateway}
 import com.typesafe.config.ConfigFactory
+import play.api.Play._
 
 import scala.concurrent.ExecutionContext
 import java.math.BigDecimal
 
 @Singleton()
 class Braintree @Inject()(implicit executionContext: ExecutionContext) {
-  val config = ConfigFactory.parseFile(new File("conf/payment.conf")).resolve()
   val gateway = new BraintreeGateway(
-    Environment.SANDBOX,
-    config.getString("merchantid"),
-    config.getString("publickey"),
-    config.getString("privatekey")
+    if (current.configuration.getBoolean("braintree.sandbox").get) Environment.SANDBOX else Environment.PRODUCTION,
+    current.configuration.getString("braintree.merchantid").get,
+    current.configuration.getString("braintree.publickey").get,
+    current.configuration.getString("braintree.privatekey").get
   )
 
   def getToken = gateway
