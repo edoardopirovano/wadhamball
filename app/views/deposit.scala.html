@@ -7,8 +7,11 @@
 @template {
 
     <div class="container">
-        <div class="row">
-            <div class="col-lg-8 text-center">
+
+                <h1>Presale Tickets for Wadham Students</h1>
+
+                <p>If you're a Wadham student you can reserve your spot at Wadham Ball 2016 by paying 65 pounds below.<br/>
+                You'll need to pay the remaining 65 pounds a week before the main ticket sale at the start of Hilary.</p>
 
                 @form(routes.Deposit.doDeposit()) {
 
@@ -19,8 +22,8 @@
                         <div id="payment-form"></div>
                     </fieldset>
 
-                    <div class="actions">
-                        <input type="submit" value="Register" class="btn primary">
+                    <div class="actions input-group">
+                        <input type="submit" value="Pay Deposit (65GBP)" class="btn primary" style="margin-right: 150px">
                     </div>
 
                     <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
@@ -30,8 +33,6 @@
                     });
                     </script>
                 }
-            </div>
-        </div>
     </div>
     
 }
