@@ -1,12 +1,10 @@
 package dao
 
-import java.sql.Timestamp
 import javax.inject.{Inject, Singleton}
 
-import models.{Ticket, Email}
+import models.Ticket
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
 import slick.driver.JdbcProfile
-import play.api.libs.concurrent.Execution.Implicits.defaultContext
 
 import scala.concurrent.Future
 
@@ -14,12 +12,13 @@ trait TicketComponent { self: HasDatabaseConfigProvider[JdbcProfile] =>
   import driver.api._
 
   class Tickets(tag: Tag) extends Table[Ticket](tag, "TICKET") {
+    def id = column[Long]("ID", O.PrimaryKey, O.AutoInc)
     def firstName = column[String]("FIRSTNAME")
     def lastName = column[String]("LASTNAME")
     def email = column[String]("EMAIL")
-    def depositOnly = column[Boolean]("DEPOSITONLY")
-    def payBy = column[Timestamp]("PAYBY")
-    def * = (firstName, lastName, email, depositOnly, payBy) <> (Ticket.tupled, Ticket.unapply)
+    def depositTransaction = column[Option[String]]("DEPOSITTRANSACTION")
+    def finalTransaction = column[Option[String]]("FINALTRANSACTION")
+    def * = (id.?, firstName, lastName, email, depositTransaction, finalTransaction) <> (Ticket.tupled, Ticket.unapply)
   }
 }
 
@@ -31,7 +30,10 @@ with HasDatabaseConfigProvider[JdbcProfile] {
 
   val tickets = TableQuery[Tickets]
 
+  def getAll: Future[Seq[Ticket]] =
+    db.run(tickets.result)
+
   /** Insert a new ticket */
-  def insert(ticket: Ticket): Future[Unit] =
-    db.run(tickets += ticket).map(_ => ())
+  def insert(ticket: Ticket): Future[Long] =
+    db.run(tickets returning tickets.map(_.id) += ticket)
 }

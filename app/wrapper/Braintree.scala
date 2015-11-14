@@ -23,15 +23,18 @@ class Braintree @Inject()(implicit executionContext: ExecutionContext) {
     .clientToken()
     .generate()
 
-  def doTransaction(amount: Integer, nonce: String) = gateway
-    .transaction()
-    .sale(
-      new TransactionRequest()
-        .amount(new BigDecimal(amount))
-        .paymentMethodNonce(nonce)
-        .options()
-          .submitForSettlement(true)
-          .done()
-    )
-    .isSuccess
+  def doTransaction(amount: Integer, nonce: String) : Option[String] = {
+    val result = gateway
+      .transaction()
+      .sale(
+        new TransactionRequest()
+          .amount(new BigDecimal(amount))
+          .paymentMethodNonce(nonce)
+          .options()
+            .submitForSettlement(true)
+            .done()
+      )
+    if (result.isSuccess) Some(result.getTarget.getId)
+    else None
+  }
 }

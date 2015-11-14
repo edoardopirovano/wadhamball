@@ -12,15 +12,27 @@ import play.api.mvc.{Result, AnyContent, Action, Controller}
 import play.api.i18n.{MessagesApi, I18nSupport}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import views.html
-import wrapper.Braintree
+import wrapper.{Mailer, Braintree}
 
 import scala.concurrent.Future
 
 import models.Ticket
 
-class Deposit @Inject() (ticketDAO: TicketDAO, val braintree: Braintree, val messagesApi: MessagesApi) extends Controller with I18nSupport {
+import scala.concurrent.{Await, Future}
+import scala.concurrent.duration.Duration
 
-  private final val timestamp: Timestamp = new Timestamp(1456790400)
+class Deposit @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: Braintree, val messagesApi: MessagesApi) extends Controller with I18nSupport {
+
+  val depositPrice = 65
+
+  val emailSubject = "Ticket Deposit Confirmation"
+
+  val emailText = StringContext("Hello ", ",<br /><br />" +
+    "Thank you for placing your deposit for a ticket to Wadham Ball 2016! Your ticket reference is ", ". " +
+    "We'll be in touch once you need to pay the remaining £65 of the ticket price (this will be the week before the main ticket sale, probably second week of Hilary).<br /><br />" +
+    "If you have any questions, feel free to send an email to <a href='mailto:ball.president@wadh.ox.ac.uk'>ball.president@wadh.ox.ac.uk</a> for help.<br /><br />" +
+    "Best regards,<br />" +
+    "Wadham Ball Committee")
 
   val depositForm = Form(
     mapping(
@@ -38,15 +50,12 @@ class Deposit @Inject() (ticketDAO: TicketDAO, val braintree: Braintree, val mes
     depositForm.bindFromRequest.fold(
       formWithErrors => Future { BadRequest(html.deposit(formWithErrors, braintree.getToken)) },
       depositRequest => {
-        if (!braintree.doTransaction(100, depositRequest.payment_method_nonce)) {
-          Future {
-            BadRequest(html.deposit(depositForm.withError("failedPayment", "Payment failed to execute."), braintree.getToken))
-          }
-        } else {
-          ticketDAO.insert(new Ticket(depositRequest.firstName, depositRequest.lastName, depositRequest.email, true, timestamp))
-          Future {
-            Ok(html.didDeposit())
-          }
+        braintree.doTransaction(depositPrice, depositRequest.payment_method_nonce) match {
+          case Some(transactionId) =>
+            val ticketId = Await.result(ticketDAO.insert(new Ticket(None, depositRequest.firstName, depositRequest.lastName, depositRequest.email, Some(transactionId), None)), Duration.Inf)
+            mailer.sendMail(Seq(depositRequest.email), emailSubject, emailText.s(depositRequest.firstName, ticketId), unsub = false)
+            Future { Ok(html.didDeposit()) }
+          case None => Future { BadRequest(html.deposit(depositForm.withError("failedPayment", "Payment failed to execute."), braintree.getToken)) }
         }
       })
   }

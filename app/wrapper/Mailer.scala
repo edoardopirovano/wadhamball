@@ -41,7 +41,7 @@ class Mailer @Inject()(implicit executionContext: ExecutionContext) {
     )(_ && _)
   }
 
-  def doSend(emails: Seq[String], subject: String, content: String, unsub: Boolean): Future[Boolean] = {
+  private def doSend(emails: Seq[String], subject: String, content: String, unsub: Boolean): Future[Boolean] = {
     WS.url("https://api.mailgun.net/v3/" + server + "/messages")
       .withAuth("api", apiKey, WSAuthScheme.BASIC)
       .withRequestTimeout(timeout)
@@ -53,6 +53,6 @@ class Mailer @Inject()(implicit executionContext: ExecutionContext) {
       "html" -> Seq(content + (if (unsub) UNSUB_STRING else "")),
       "o:tag" -> (if (unsub) Seq("newsletter") else Seq())
     ))
-    .map(response => response.status == 200)
+    .map(_.status == 200)
   }
 }

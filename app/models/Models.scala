@@ -7,10 +7,7 @@ case class Email(email: String, joinDate: Timestamp)
 
 case class SendEmail(subject: String, content: String)
 
-// TODO
-case class Order()
-
-case class Ticket(firstName: String, lastName: String, email: String, depositOnly: Boolean, payby: Timestamp)
+case class Ticket(id: Option[Long], firstName: String, lastName: String, email: String, depositTransaction: Option[String], finalTransaction: Option[String])
 
 case class Registration(firstName: String, lastName: String, email:String, isWadham: Boolean, numberOfGuests: Int)
 
