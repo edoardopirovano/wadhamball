@@ -38,7 +38,9 @@ class Deposit @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: Br
     mapping(
       "firstName" -> nonEmptyText(1, 50),
       "lastName" -> nonEmptyText(1, 50),
-      "email" -> email.verifying("Must be a Wadham email address", email => email.contains("@wadh.ox.ac.uk")),
+      "email" -> email
+        .verifying("Must be a Wadham email address", email => email.contains("@wadh.ox.ac.uk"))
+        .verifying("This email has already been used to pay a deposit", email => !Await.result(ticketDAO.contains(email), Duration.Inf)),
       "payment_method_nonce" -> nonEmptyText
     )(DepositForm.apply)(DepositForm.unapply))
 
