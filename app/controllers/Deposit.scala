@@ -29,7 +29,7 @@ class Deposit @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: Br
 
   val emailText = StringContext("Hello ", ",<br /><br />" +
     "Thank you for placing your deposit for a ticket to Wadham Ball 2016! Your ticket reference is ", ". " +
-    "We'll be in touch once you need to pay the remaining £65 of the ticket price (this will be the week before the main ticket sale, probably second week of Hilary).<br /><br />" +
+    "We'll be in touch once you need to pay the remaining £65 of the ticket price (this will be the week before the main ticket sale).<br /><br />" +
     "If you have any questions, feel free to send an email to <a href='mailto:ball.president@wadh.ox.ac.uk'>ball.president@wadh.ox.ac.uk</a> for help.<br /><br />" +
     "Best regards,<br />" +
     "Wadham Ball Committee")
