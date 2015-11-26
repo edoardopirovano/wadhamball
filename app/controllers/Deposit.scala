@@ -45,19 +45,19 @@ class Deposit @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: Br
     )(DepositForm.apply)(DepositForm.unapply))
 
   val deposit = Action.async { implicit rs =>
-    Future { Ok(html.deposit(depositForm, braintree.getToken)) }
+    Future { Ok(html.deposit(depositForm, braintree.getToken, false)) }
   }
 
   def doDeposit = Action.async { implicit rs =>
     depositForm.bindFromRequest.fold(
-      formWithErrors => Future { BadRequest(html.deposit(formWithErrors, braintree.getToken)) },
+      formWithErrors => Future { BadRequest(html.deposit(formWithErrors, braintree.getToken, false)) },
       depositRequest => {
         braintree.doTransaction(depositPrice, depositRequest.payment_method_nonce) match {
           case Some(transactionId) =>
             val ticketId = Await.result(ticketDAO.insert(new Ticket(None, depositRequest.firstName, depositRequest.lastName, depositRequest.email, Some(transactionId), None)), Duration.Inf)
             mailer.sendMail(Seq(depositRequest.email), emailSubject, emailText.s(depositRequest.firstName, ticketId), unsub = false)
             Future { Ok(html.didDeposit()) }
-          case None => Future { BadRequest(html.deposit(depositForm.withError("failedPayment", "Payment failed to execute."), braintree.getToken)) }
+          case None => Future { BadRequest(html.deposit(depositForm.withError("failedPayment", ""), braintree.getToken, true)) }
         }
       })
   }

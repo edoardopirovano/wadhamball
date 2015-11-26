@@ -1,4 +1,4 @@
-@(registrationForm: Form[DepositForm], clientToken: String)(implicit flash: play.api.mvc.Flash, messages: Messages)
+@(registrationForm: Form[DepositForm], clientToken: String, didFail: Boolean)(implicit flash: play.api.mvc.Flash, messages: Messages)
 
 @import helper._
 
@@ -9,6 +9,12 @@
     <div class="container">
 
                 <h1>Presale Tickets for Wadham Students</h1>
+
+                @if(didFail) {
+                    <div class="alert-message warning">
+                        <strong>There was an error processing your transaction!</strong>
+                    </div>
+                }
 
                 <p>If you're a Wadham student you can reserve your spot at Wadham Ball 2016 by paying 65 pounds below.<br/>
                 Please note that you can only reserve one ticket for yourself here, guests will have to buy tickets in the main ticket sale at the start of Hilary.<br />
