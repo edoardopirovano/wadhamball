@@ -1,6 +1,6 @@
 name := """wadhamball"""
 
-version := "1.0"
+version := "1.1"
 
 scalaVersion := "2.11.5"
 

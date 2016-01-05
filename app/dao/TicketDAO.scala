@@ -30,6 +30,9 @@ with HasDatabaseConfigProvider[JdbcProfile] {
 
   val tickets = TableQuery[Tickets]
 
+  def contains(email:String): Future[Boolean] =
+    db.run(tickets.filter(_.email === email).exists.result)
+
   def getAll: Future[Seq[Ticket]] =
     db.run(tickets.result)
 

@@ -17,14 +17,15 @@ import scala.concurrent.{Future, ExecutionContext}
 
 import play.api.Play.current
 
+import play.api.Play.current
+
 @Singleton()
 class Mailer @Inject()(implicit executionContext: ExecutionContext) {
-  val config = ConfigFactory.parseFile(new File("conf/mailer.conf")).resolve()
-  val server = config.getString("server")
-  val apiKey = config.getString("apiKey")
-  val timeout = config.getLong("timeout")
-  val fromName = config.getString("fromName")
-  val fromEmail = config.getString("fromEmail")
+  val server = current.configuration.getString("mailgun.server").get
+  val apiKey = current.configuration.getString("mailgun.apiKey").get
+  val timeout = current.configuration.getLong("mailgun.timeout").get
+  val fromName = current.configuration.getString("mailgun.fromName").get
+  val fromEmail = current.configuration.getString("mailgun.fromEmail").get
 
   val UNSUB_STRING =
     """
