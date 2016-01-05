@@ -12,6 +12,8 @@ GET         /deposit               controllers.Deposit.deposit
 POST        /deposit               controllers.Deposit.doDeposit
 GET         /admin/sendmail        controllers.Application.sendmail
 POST        /admin/sendnews        controllers.Application.sendnews
+GET         /admin/sendreminder    controllers.Application.getreminder
+POST        /admin/sendreminder    controllers.Application.sendreminder
 GET         /favicon.ico           controllers.Assets.at(path="/public", file="favicon.ico")
 
 # Map static resources from the /public folder to the /assets URL path

@@ -32,6 +32,7 @@ class Application @Inject() (emailsDAO: EmailsDAO, mailer: Mailer, val messagesA
   val Home = Redirect(routes.Application.home())
   val Subscribe = Redirect(routes.Application.subscription())
   val EmailSend = Redirect(routes.Application.sendmail())
+  val ReminderSend = Redirect(routes.Application.sendreminder())
 
   val emailForm = Form(
     mapping(
@@ -45,6 +46,12 @@ class Application @Inject() (emailsDAO: EmailsDAO, mailer: Mailer, val messagesA
       "subject" -> nonEmptyText(1, 100),
       "content" -> nonEmptyText
     )(SendEmail.apply)(SendEmail.unapply))
+
+  val reminderApprovalForm = Form(
+    mapping(
+      "confirm" -> nonEmptyText
+    )(identity[String])(Option.apply)
+  )
 
 //  val sendForm = Form(
 //    mapping(
@@ -101,4 +108,26 @@ class Application @Inject() (emailsDAO: EmailsDAO, mailer: Mailer, val messagesA
       }
     )
   }
+
+  def getreminder = Action.async { implicit rs =>
+    Future { Ok(html.sendreminder(reminderApprovalForm)) }
+  }
+
+  def sendreminder = Action.async { implicit rs =>
+    reminderApprovalForm.bindFromRequest.fold(
+      formWithErrors => Future { BadRequest(html.sendreminder(formWithErrors)) },
+      confirmationString => {
+        if (confirmationString.equalsIgnoreCase("confirm")) {
+          // Admin has confirmed, lets send some emails
+          Future {Ok("confirmed")}
+        }
+        else {
+          // Not confirmed, redisplay form with flashing failure
+          Future { ReminderSend.flashing("failure" -> "Admin did not confirm action") }
+        }
+      }
+    )
+  }
+
+
 }
