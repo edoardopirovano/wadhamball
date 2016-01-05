@@ -28,4 +28,8 @@ class Payment @Inject() (braintree: Braintree, val messagesApi: MessagesApi) ext
     braintree.doTransaction(100, payment_method_nonce)
     Future { Ok(html.payment(braintree.getToken)) }
   }
+
+  def paid = Action.async{ implicit rs =>
+    Future { Ok(html.paid()) }
+  }
 }

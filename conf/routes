@@ -5,10 +5,13 @@
 # Default path will just redirect to the computer list
 GET         /                      controllers.Application.index
 GET         /home                  controllers.Application.home
+GET         /paid                  controllers.Payment.paid
 GET         /subscription          controllers.Application.subscription
 GET         /subscribe             controllers.Application.subscribe
 POST        /unsubscribe           controllers.Application.unsubscribe(recipient: String)
 GET         /deposit               controllers.Deposit.deposit
+GET         /settle/:id            controllers.Deposit.settle(id: Int)
+POST        /settle                controllers.Deposit.doSettle
 GET         /admin/sendmail        controllers.Application.sendmail
 POST        /admin/sendnews        controllers.Application.sendnews
 GET         /admin/sendreminder    controllers.Application.getreminder
