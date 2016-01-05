@@ -1,33 +1,24 @@
 package controllers
 
-import java.security.SecureRandom
 import java.sql.Timestamp
-import java.util.UUID
 import javax.inject.Inject
-import dao.EmailsDAO
-import models.Email
-import org.apache.commons.lang3.RandomStringUtils
+
+import dao.{TicketDAO, EmailsDAO}
+import models.{Email, _}
+import play.api._
 import play.api.data.Form
-import play.api.data.Forms.{mapping, email}
-import play.api.i18n.{MessagesApi, I18nSupport}
+import play.api.data.Forms.{email, mapping, _}
+import play.api.i18n.{I18nSupport, MessagesApi}
 import play.api.libs.concurrent.Execution.Implicits.defaultContext
 import play.api.mvc.{Action, Controller}
 import views.html
 import wrapper.Mailer
 
-import play.api._
-import play.api.mvc._
-import play.api.data._
-import play.api.data.Forms._
-
-import views._
-import models._
-
-import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, Future}
 
 /** Manage a database of computers. */
-class Application @Inject() (emailsDAO: EmailsDAO, mailer: Mailer, val messagesApi: MessagesApi) extends Controller with I18nSupport {
+class Application @Inject() (emailsDAO: EmailsDAO, ticketDAO: TicketDAO, mailer: Mailer, val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
   val Home = Redirect(routes.Application.home())
   val Subscribe = Redirect(routes.Application.subscription())
@@ -52,6 +43,15 @@ class Application @Inject() (emailsDAO: EmailsDAO, mailer: Mailer, val messagesA
       "confirm" -> nonEmptyText
     )(identity[String])(Option.apply)
   )
+
+  val reminderEmailSubject = "Final Ticket Balance Reminder"
+
+  val reminderEmailText = StringContext("Hello ", ",<br /><br />" +
+    "Just a quick reminder that the remaining balance for your ticket to Wadham Ball 2016 is due. Your remaining balance can be paid here. http://wadhamball.co.uk/settle/", ". " +
+    "We look forward to seeing you at Wadham Ball 2016.<br /><br />" +
+    "If you have any questions, feel free to send an email to <a href='mailto:ball.president@wadh.ox.ac.uk'>ball.president@wadh.ox.ac.uk</a> for help.<br /><br />" +
+    "Best regards,<br />" +
+    "Wadham Ball Committee")
 
 //  val sendForm = Form(
 //    mapping(
@@ -119,7 +119,15 @@ class Application @Inject() (emailsDAO: EmailsDAO, mailer: Mailer, val messagesA
       confirmationString => {
         if (confirmationString.equalsIgnoreCase("confirm")) {
           // Admin has confirmed, lets send some emails
-          Future {Ok("confirmed")}
+          val unpaidTickets = Await.result(ticketDAO.getUnpaid, Duration.Inf)
+          val responses = for (ticket <- unpaidTickets) yield mailer.sendMail(Seq(ticket.email), reminderEmailSubject, reminderEmailText.s(ticket.firstName, ticket.id.get), false)
+          val response = Await.result(Future.sequence(responses), Duration.Inf)
+          val errors = response.zipWithIndex.collect { case (false, i) => s"""Error sending reminder for ticket ${unpaidTickets(i)}""" }
+          if (errors.nonEmpty) {
+            errors.foreach(err => Logger.error(err))
+            Future { ReminderSend.flashing("failure" -> "Failed to send some reminders - see logs.") }
+          }
+          else Future { ReminderSend.flashing("success" -> "Message sent") }
         }
         else {
           // Not confirmed, redisplay form with flashing failure

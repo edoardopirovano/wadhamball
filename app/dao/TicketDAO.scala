@@ -40,6 +40,9 @@ with HasDatabaseConfigProvider[JdbcProfile] {
   def getAll: Future[Seq[Ticket]] =
     db.run(tickets.result)
 
+  def getUnpaid: Future[Seq[Ticket]] =
+    db.run(tickets.filter(_.finalTransaction.isEmpty).result)
+
   /** Insert a new ticket */
   def insert(ticket: Ticket): Future[Long] =
     db.run(tickets returning tickets.map(_.id) += ticket)
