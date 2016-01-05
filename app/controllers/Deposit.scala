@@ -5,6 +5,7 @@ import javax.inject.Inject
 
 import dao.TicketDAO
 import models._
+import play.api.Logger
 import play.api.data.Form
 import play.api.data.Forms._
 import play.api.i18n.MessagesApi
@@ -112,6 +113,7 @@ class Deposit @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: Br
             }
             Await.result(paymentAdd, Duration.Inf)
             mailer.sendMail(Seq(Await.result(emailTo, Duration.Inf).get), allPaidEmailSubject, allPaidEmailText.s(Await.result(name, Duration.Inf).get, settleRequest.id), unsub = false)
+              .map((success:Boolean) => if (!success) Logger.error("Email failed to send to " + Await.result(emailTo, Duration.Inf).get))
           case None => error = true
         }
         error match {
