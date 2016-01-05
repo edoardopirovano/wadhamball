@@ -51,7 +51,7 @@ with HasDatabaseConfigProvider[JdbcProfile] {
     db.run(this.tickets ++= tickets).map(_ => ())
 
   def diningAvailable: Future[Boolean] =
-    db.run((tickets.filter(_.isDining).length < maxDining).result)
+    db.run((tickets.filter(_.isDining).length < 1).result)
 
   def getName(id: Long): Future[Option[String]] =
     db.run(tickets.filter(_.id === id).map(_.firstName).result.headOption)

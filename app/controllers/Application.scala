@@ -47,7 +47,8 @@ class Application @Inject() (emailsDAO: EmailsDAO, ticketDAO: TicketDAO, mailer:
   val reminderEmailSubject = "Final Ticket Balance Reminder"
 
   val reminderEmailText = StringContext("Hello ", ",<br /><br />" +
-    "Just a quick reminder that the remaining balance for your ticket to Wadham Ball 2016 is due. Your remaining balance can be paid here. http://wadhamball.co.uk/settle/", ". " +
+    "Just a quick reminder that the remaining balance for your ticket to Wadham Ball 2016 is due. Your remaining balance can be paid here:<br /><br />" +
+    "<a href='http://wadhamball.co.uk/settle/", "'>http://wadhamball.co.uk/settle/","</a><br /><br />" +
     "We look forward to seeing you at Wadham Ball 2016.<br /><br />" +
     "If you have any questions, feel free to send an email to <a href='mailto:ball.president@wadh.ox.ac.uk'>ball.president@wadh.ox.ac.uk</a> for help.<br /><br />" +
     "Best regards,<br />" +
@@ -120,7 +121,7 @@ class Application @Inject() (emailsDAO: EmailsDAO, ticketDAO: TicketDAO, mailer:
         if (confirmationString.equalsIgnoreCase("confirm")) {
           // Admin has confirmed, lets send some emails
           val unpaidTickets = Await.result(ticketDAO.getUnpaid, Duration.Inf)
-          val responses = for (ticket <- unpaidTickets) yield mailer.sendMail(Seq(ticket.email), reminderEmailSubject, reminderEmailText.s(ticket.firstName, ticket.id.get), false)
+          val responses = for (ticket <- unpaidTickets) yield mailer.sendMail(Seq(ticket.email), reminderEmailSubject, reminderEmailText.s(ticket.firstName, ticket.id.get, ticket.id.get), false)
           val response = Await.result(Future.sequence(responses), Duration.Inf)
           val errors = response.zipWithIndex.collect { case (false, i) => s"""Error sending reminder for ticket ${unpaidTickets(i)}""" }
           if (errors.nonEmpty) {

@@ -16,8 +16,12 @@
             </div>
         }
 
-        <p>If you're a Wadham student who's paid a deposit on their ticket, you can settle the remaining 65GBP (plus a transaction fee of 3GBP that's set by our card processor, sorry!) here.
-            @if(upgradeAvailable){<br />You can also optionally upgrade to a dining ticket for an extra 45, while these are still available.}
+        <p>If you're a Wadham student who's paid a deposit on their ticket, you can settle the remaining 65GBP (plus a transaction fee of 3GBP that's set by our card processor, sorry!) here.<br />
+            @if(upgradeAvailable){
+                You can also optionally upgrade to a dining ticket for an extra 45, while these are still available.
+            } else {
+                Dining upgrades are now sold out unfortunately.
+            }
         </p>
 
         @if(clientString.isEmpty) {
@@ -38,7 +42,7 @@
                         @if(upgradeAvailable) {
                             @checkbox(settleForm("diningUpgrade"), '_label -> "Dining Upgrade (+45GBP)?")
                         } else {
-                            <input type="hidden" name="diningUpgrade" value="">
+                            @checkbox(settleForm("diningUpgrade"), '_label -> "Dining Upgrade?", 'disabled -> "disabled")
                         }
                         <div id="payment-form"></div>
                     </fieldset>
