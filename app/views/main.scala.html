@@ -1,276 +1,296 @@
 <!DOCTYPE html>
 <html lang="en">
-
     <head>
-
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta name="description" content="">
         <meta name="author" content="">
+        <link rel="shortcut icon" href="/ico/favicon.ico">
 
-        <title>Wadham Ball 2016</title>
+        <title>Wadham College Ball 2016</title>
 
-            <!-- Bootstrap Core CSS -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+            <!-- Bootstrap core CSS -->
+        <link rel="stylesheet" type="text/css" href="/assets/css/bootstrap.min.css" />
 
-            <!-- Custom Fonts -->
-        <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800' rel='stylesheet' type='text/css'>
-        <link href='http://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic,900,900italic' rel='stylesheet' type='text/css'>
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+            <!-- Custom styles for this template -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
 
-            <!-- Plugin CSS -->
-        <link rel="stylesheet" href="http://cdn.bootcss.com/animate.css/3.4.0/animate.css" type="text/css">
+        <link href="/assets/css/main.css" rel="stylesheet">
 
-            <!-- Custom CSS -->
-        <link rel="stylesheet" href="@routes.Assets.at("stylesheets/creative.css")" type="text/css">
+        <script type="text/javascript" src="/assets/js/jquery.min.js"></script>
+        <script>
+        function initMap() {
+          var myLatLng = new google.maps.LatLng(51.755717, -1.254311);
+            var image = {
+            url: '/assets/images/YellowShroom.png',
+            // This marker is 20 pixels wide by 32 pixels high.
+            scaledSize: new google.maps.Size(64, 64),
+            // The origin for this image is (0, 0).
+            origin: new google.maps.Point(0, 0),
+            // The anchor for this image is the base of the flagpole at (0, 32).
+            anchor: new google.maps.Point(32, 32)
+          };
+          var mapProp = {
+            center:myLatLng,
+            zoom:15,
+            styles:[{"featureType":"all","elementType":"all","stylers":[{"visibility":"simplified"},{"hue":"#bc00ff"},{"saturation":"0"}]},{"featureType":"administrative","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"administrative","elementType":"labels.text.fill","stylers":[{"color":"#e8b8f9"}]},{"featureType":"administrative.country","elementType":"labels","stylers":[{"color":"#ff0000"}]},{"featureType":"administrative.land_parcel","elementType":"labels.text.fill","stylers":[{"visibility":"simplified"}]},{"featureType":"landscape","elementType":"all","stylers":[{"color":"#3e114e"},{"visibility":"simplified"}]},{"featureType":"landscape","elementType":"labels","stylers":[{"visibility":"off"},{"color":"#a02aca"}]},{"featureType":"landscape.natural","elementType":"all","stylers":[{"visibility":"simplified"},{"color":"#2e093b"}]},{"featureType":"landscape.natural","elementType":"labels.text","stylers":[{"color":"#9e1010"},{"visibility":"off"}]},{"featureType":"landscape.natural","elementType":"labels.text.fill","stylers":[{"color":"#ff0000"}]},{"featureType":"landscape.natural.landcover","elementType":"all","stylers":[{"visibility":"simplified"},{"color":"#58176e"}]},{"featureType":"landscape.natural.landcover","elementType":"labels.text.fill","stylers":[{"visibility":"simplified"}]},{"featureType":"poi","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"poi.business","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"road","elementType":"all","stylers":[{"saturation":-100},{"lightness":45}]},{"featureType":"road","elementType":"geometry","stylers":[{"visibility":"simplified"},{"color":"#a02aca"}]},{"featureType":"road","elementType":"labels","stylers":[{"visibility":"simplified"}]},{"featureType":"road","elementType":"labels.text.fill","stylers":[{"color":"#d180ee"}]},{"featureType":"road","elementType":"labels.text.stroke","stylers":[{"visibility":"simplified"}]},{"featureType":"road.highway","elementType":"all","stylers":[{"visibility":"simplified"}]},{"featureType":"road.highway","elementType":"geometry","stylers":[{"visibility":"simplified"},{"color":"#a02aca"}]},{"featureType":"road.highway","elementType":"labels","stylers":[{"visibility":"off"},{"color":"#ff0000"}]},{"featureType":"road.highway","elementType":"labels.text","stylers":[{"color":"#a02aca"},{"visibility":"simplified"}]},{"featureType":"road.highway","elementType":"labels.text.fill","stylers":[{"color":"#cc81e7"},{"visibility":"simplified"}]},{"featureType":"road.highway","elementType":"labels.text.stroke","stylers":[{"visibility":"simplified"},{"hue":"#bc00ff"}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#6d2388"}]},{"featureType":"road.arterial","elementType":"labels.text.fill","stylers":[{"color":"#c46ce3"}]},{"featureType":"road.arterial","elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"all","stylers":[{"visibility":"off"}]},{"featureType":"water","elementType":"all","stylers":[{"color":"#b7918f"},{"visibility":"on"}]},{"featureType":"water","elementType":"geometry","stylers":[{"color":"#280b33"}]},{"featureType":"water","elementType":"labels","stylers":[{"visibility":"simplified"},{"color":"#a02aca"}]}],
+            mapTypeId:google.maps.MapTypeId.ROADMAP
+          };
+          var map=new google.maps.Map(document.getElementById("googleMap"),mapProp);
+          var marker = new google.maps.Marker({
+                position: myLatLng,
+                title:"Wadham College",
+                icon: image,
+                map: map
+            });
+            marker.setMap(map);
+        }
+        </script>
 
-            <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-            <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <link href='http://fonts.googleapis.com/css?family=Oswald:400,300,700' rel='stylesheet' type='text/css'>
+        <link href='http://fonts.googleapis.com/css?family=EB+Garamond' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Rock+Salt' rel='stylesheet' type='text/css'>
+        <link href='https://fonts.googleapis.com/css?family=Dancing+Script' rel='stylesheet' type='text/css'>
+
+            <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
             <!--[if lt IE 9]>
-        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+      <script src="/assets/js/html5shiv.js"></script>
+      <script src="/assets/js/respond.min.js"></script>
     <![endif]-->
-
     </head>
 
-    <body id="page-top">
+    <body data-spy="scroll" data-offset="0" data-target="#theMenu">
+        <div id="fb-root"></div>
+        <script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) return;
+  js = d.createElement(s); js.id = id;
+  js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.5&appId=1232435306770922";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
 
-        <nav id="mainNav" class="navbar navbar-default navbar-fixed-top">
-            <div class="container-fluid">
-                    <!-- Brand and toggle get grouped for better mobile display -->
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand page-scroll" href="#page-top">Wadham Ball 2016</a>
+            <!-- Menu -->
+        <nav class="menu" id="theMenu">
+            <div class="menu-wrap">
+                <h1 class="logo"><a href="/home">Wadham Ball</a></h1>
+                <i class="icon-remove menu-close"></i>
+                <a href="#home" class="smoothScroll">Home</a>
+                <a href="#about" class="smoothScroll">About</a>
+                <a href="#tickets" class="smoothScroll">Tickets</a>
+                <a href="#entertainment" class="smoothScroll">Entertainment</a>
+                <a href="#food" class="smoothScroll">Food & Drink</a>
+                <a href="#location" class="smoothScroll">Location</a>
+                <a href="#charity" class="smoothScroll">Charity</a>
+                <a href="#committee" class="smoothScroll">Committee</a><br/>
+                <div style="margin-left: 20px">
+                <div class="fb-like" data-href="https://www.facebook.com/Wadham-Wonderland-Ball-2016-1642258779389803" data-layout="button_count" data-action="like" data-show-faces="false" data-share="true"></div><br/><br/>
+                <a href="https://twitter.com/wadhamball2016" class="twitter-follow-button" data-show-count="false">Follow @@wadhamball2016</a>
+                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>                </div>
+                <!-- Menu button --></div>
+            <div id="menuToggle"><img src="/assets/images/menu.png" alt="Menu" style="width:80px;height:80px;">
                 </div>
-
-                    <!-- Collect the nav links, forms, and other content for toggling -->
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                    <ul class="nav navbar-nav navbar-right">
-                        <!--
-                        <li>
-                            <a class="page-scroll" href="#about">About</a>
-                        </li>
-                        -->
-                    </ul>
-                </div>
-                    <!-- /.navbar-collapse -->
-            </div>
-                <!-- /.container-fluid -->
         </nav>
 
-        <header>
-            <div class="header-content">
-                <div class="header-content-inner">
-                    <h1>Under Construction</h1>
-                    <hr>
-                    <p>The website is currently under construction, keep checking for more information.</p>
-                    <!--<a href="#about" class="btn btn-primary btn-xl page-scroll">Find Out More</a>-->
+            <!-- ========== HEADER SECTION ========== -->
+        <section id="home" name="home"></section>
+        <div id="headerwrap" style="background:url('/assets/images/header-bg.png') no-repeat center top; background-size:cover;">
+            <div class="container">
+                <div class="logo">
+                    <!--<img src="/assets/images/logo.png">-->
+                </div>
+                <br>
+                <div class="row">
+                    <h1>Wadham College Ball 2016</h1><!--
+                    <br>
+                    <h3>Hello, I'm Carlos. I love design.</h3> #neverforget
+                    <br>
+                    <br>-->
+                    <div class="col-lg-10 col-lg-offset-1">
+                </div>
                 </div>
             </div>
-        </header>
-        <!--
-        <section class="bg-primary" id="about">
+                <!-- /container -->
+        </div>
+            <!-- /headerwrap -->
+
+            <!-- ========== ABOUT SECTION ========== -->
+        <section id="about" name="about"></section>
+        <div id="f">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-8 col-lg-offset-2 text-center">
-                        <h2 class="section-heading">We've got what you need!</h2>
-                        <hr class="light">
-                        <p class="text-faded">Start Bootstrap has everything you need to get your new website up and running in no time! All of the templates and themes on Start Bootstrap are open source, free to download, and easy to use. No strings attached!</p>
-                        <a href="#" class="btn btn-default btn-xl">Get Started!</a>
+                    <h3>ABOUT</h3>
+                    <p class="centered"><i class="icon icon-circle"></i><i class="icon icon-circle"></i><i class="icon icon-circle"></i></p>
+
+                        <!-- INTRO INFORMATIO-->
+                    <div class="col-lg-10 col-lg-offset-1">
+                        <h4>If I had a world of my own?<br/>Everything would be nonsense.</h4>
+                        <p>Join us on the eve of 24th June, as Wadham College prepares to re-imagine the iconic tale of Alice in Wonderland. Upon falling into a world of neon spectacles and psychedelic installations, guests will bring the historic tale screaming into the 21st century.</p>
+                        <p>As darkness falls and clocks chime <i>tick tock</i> the present will transform into a nonsensical luminous grinning utopia. Because as the Cheshire Cat declares, imagination is the only weapon in the war against reality.</p>
                     </div>
                 </div>
             </div>
-        </section>
+                <!-- /container -->
+        </div>
+        <img src="/assets/images/divider.png" alt="Divider" height="120px" class="divider">
 
-        <section id="services">
+        <section id="tickets" name="tickets"></section>
+        <div id="f">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-12 text-center">
-                        <h2 class="section-heading">At Your Service</h2>
-                        <hr class="primary">
+                    <h3>TICKETS</h3>
+                    <p class="centered"><i class="icon icon-circle"></i><i class="icon icon-circle"></i><i class="icon icon-circle"></i></p>
+
+                        <!-- INTRO INFORMATIO-->
+                    <div class="col-lg-10 col-lg-offset-1">
+                        <p>Tickets go on sale at 5pm on Thursday of 2nd week.</p>
+                        <p>Non-dining tickets: 130</p>
+                        <p>Dining tickets: 175</p>
+                        <p>
+                            <a type="button" class="btn btn-info" href="/tickets" disabled="disabled">Buy Tickets</a>
+                        </p>
                     </div>
                 </div>
             </div>
+                <!-- /container -->
+        </div>
+        <img src="/assets/images/divider.png" alt="Divider" height="120px" class="divider">
+
+        <section id="entertainment" name="entertainment"></section>
+        <div id="f">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-3 col-md-6 text-center">
-                        <div class="service-box">
-                            <i class="fa fa-4x fa-diamond wow bounceIn text-primary"></i>
-                            <h3>Sturdy Templates</h3>
-                            <p class="text-muted">Our templates are updated regularly so they don't break.</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 text-center">
-                        <div class="service-box">
-                            <i class="fa fa-4x fa-paper-plane wow bounceIn text-primary" data-wow-delay=".1s"></i>
-                            <h3>Ready to Ship</h3>
-                            <p class="text-muted">You can use this theme as is, or you can make changes!</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 text-center">
-                        <div class="service-box">
-                            <i class="fa fa-4x fa-newspaper-o wow bounceIn text-primary" data-wow-delay=".2s"></i>
-                            <h3>Up to Date</h3>
-                            <p class="text-muted">We update dependencies to keep things fresh.</p>
-                        </div>
-                    </div>
-                    <div class="col-lg-3 col-md-6 text-center">
-                        <div class="service-box">
-                            <i class="fa fa-4x fa-heart wow bounceIn text-primary" data-wow-delay=".3s"></i>
-                            <h3>Made with Love</h3>
-                            <p class="text-muted">You have to make your websites with love these days!</p>
-                        </div>
+                    <h3>ENTERTAINMENT</h3>
+                    <p class="centered"><i class="icon icon-circle"></i><i class="icon icon-circle"></i><i class="icon icon-circle"></i></p>
+
+                        <!-- INTRO INFORMATIO-->
+                    <div class="col-lg-10 col-lg-offset-1">
+                        <p><i>Wadham Wonderland</i> will create an interactive, kaleidoscopic and multi-dimensional space. <i>Featuring</i>... A juxtaposition of acoustic, pop and electro-music destinations.</p>
+                        <p>Spectacular firework displays throwing neon illuminations. White rabbits encouraging you to explore the conceptual art and experimental installations hidden around our gardens. Euphoric thrills of magical fairground rides and hilarious live comedy.</p>
                     </div>
                 </div>
             </div>
-        </section>
+                <!-- /container -->
+        </div>
+        <img src="/assets/images/divider.png" alt="Divider" height="120px" class="divider">
 
-        <section class="no-padding" id="portfolio">
-            <div class="container-fluid">
-                <div class="row no-gutter">
-                    <div class="col-lg-4 col-sm-6">
-                        <a href="#" class="portfolio-box">
-                            <img src="@routes.Assets.at("img/portfolio/1.jpg")" class="img-responsive" alt="">
-                            <div class="portfolio-box-caption">
-                                <div class="portfolio-box-caption-content">
-                                    <div class="project-category text-faded">
-                                    Category
-                                    </div>
-                                    <div class="project-name">
-                                    Project Name
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-lg-4 col-sm-6">
-                        <a href="#" class="portfolio-box">
-                            <img src="@routes.Assets.at("img/portfolio/2.jpg")" class="img-responsive" alt="">
-                            <div class="portfolio-box-caption">
-                                <div class="portfolio-box-caption-content">
-                                    <div class="project-category text-faded">
-                                    Category
-                                    </div>
-                                    <div class="project-name">
-                                    Project Name
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-lg-4 col-sm-6">
-                        <a href="#" class="portfolio-box">
-                            <img src="@routes.Assets.at("img/portfolio/3.jpg")" class="img-responsive" alt="">
-                            <div class="portfolio-box-caption">
-                                <div class="portfolio-box-caption-content">
-                                    <div class="project-category text-faded">
-                                    Category
-                                    </div>
-                                    <div class="project-name">
-                                    Project Name
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-lg-4 col-sm-6">
-                        <a href="#" class="portfolio-box">
-                            <img src="@routes.Assets.at("img/portfolio/4.jpg")" class="img-responsive" alt="">
-                            <div class="portfolio-box-caption">
-                                <div class="portfolio-box-caption-content">
-                                    <div class="project-category text-faded">
-                                    Category
-                                    </div>
-                                    <div class="project-name">
-                                    Project Name
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-lg-4 col-sm-6">
-                        <a href="#" class="portfolio-box">
-                            <img src="@routes.Assets.at("img/portfolio/5.jpg")" class="img-responsive" alt="">
-                            <div class="portfolio-box-caption">
-                                <div class="portfolio-box-caption-content">
-                                    <div class="project-category text-faded">
-                                    Category
-                                    </div>
-                                    <div class="project-name">
-                                    Project Name
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                    <div class="col-lg-4 col-sm-6">
-                        <a href="#" class="portfolio-box">
-                            <img src="@routes.Assets.at("img/portfolio/6.jpg")" class="img-responsive" alt="">
-                            <div class="portfolio-box-caption">
-                                <div class="portfolio-box-caption-content">
-                                    <div class="project-category text-faded">
-                                    Category
-                                    </div>
-                                    <div class="project-name">
-                                    Project Name
-                                    </div>
-                                </div>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <aside class="bg-dark">
-            <div class="container text-center">
-                <div class="call-to-action">
-                    <h2>Free Download at Start Bootstrap!</h2>
-                    <a href="#" class="btn btn-default btn-xl wow tada">Download Now!</a>
-                </div>
-            </div>
-        </aside>
-
-        <section id="contact">
+        <section id="food" name="food"></section>
+        <div id="f">
             <div class="container">
                 <div class="row">
-                    <div class="col-lg-8 col-lg-offset-2 text-center">
-                        <h2 class="section-heading">Let's Get In Touch!</h2>
-                        <hr class="primary">
-                        <p>Ready to start your next project with us? That's great! Give us a call or send us an email and we will get back to you as soon as possible!</p>
-                    </div>
-                    <div class="col-lg-4 col-lg-offset-2 text-center">
-                        <i class="fa fa-phone fa-3x wow bounceIn"></i>
-                        <p>123-456-6789</p>
-                    </div>
-                    <div class="col-lg-4 text-center">
-                        <i class="fa fa-envelope-o fa-3x wow bounceIn" data-wow-delay=".1s"></i>
+                    <h3>FOOD & DRINK</h3>
+                    <p class="centered"><i class="icon icon-circle"></i><i class="icon icon-circle"></i><i class="icon icon-circle"></i></p>
+
+                        <!-- INTRO INFORMATIO-->
+                    <div class="col-lg-10 col-lg-offset-1">
+                        <h4>Eat me. Drink me.</h4>
+                        <p>Wonderland will play host to a deliciously surreal feast, filled with gastronomic delights and wildly-tasty concoctions. A three course meal to lull you into a state of synaesthetic wonder- even the Mad Hatter couldn't conjure up...</p>
+                        <p>As you venture deeper into the rabbit hole, you'll discover a mesmerising display of culinary wonders to welcome you. The buzz of street food, sugary treats and hidden bars will cater to your every whim.</p>
+                        <p>We have also curated a selection of the finest mixology that will mesmerise, shock and leave you curiouser and curiouser...</p>
                     </div>
                 </div>
             </div>
-        </section>
-        -->
+                <!-- /container -->
+        </div>
+        <img src="/assets/images/divider.png" alt="Divider" height="120px" class="divider">
 
-            <!-- jQuery -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+        <section id="location" name="location"></section>
+        <div id="f">
+            <div class="container">
+                <div class="row">
+                    <h3>LOCATION</h3>
+                    <p class="centered"><i class="icon icon-circle"></i><i class="icon icon-circle"></i><i class="icon icon-circle"></i></p>
 
-            <!-- Bootstrap Core JavaScript -->
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+                        <!-- INTRO INFORMATIO-->
+                    <div class="col-lg-10 col-lg-offset-1">
+                        <div id="googleMap" class="col-lg-12" style="height: 500px"></div>
+                    </div>
+                </div>
+            </div>
+                <!-- /container -->
+        </div>
+        <img src="/assets/images/divider.png" alt="Divider" height="120px" class="divider">
 
-            <!-- Plugin JavaScript -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.3/jquery.easing.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/FitText.js/1.2.0/jquery.fittext.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/wow/1.1.2/wow.js"></script>
+        <section id="charity" name="charity"></section>
+        <div id="f">
+            <div class="container">
+                <div class="row">
+                    <h3>CHARITY</h3>
+                    <p class="centered"><i class="icon icon-circle"></i><i class="icon icon-circle"></i><i class="icon icon-circle"></i></p>
 
-            <!-- Custom Theme JavaScript -->
-        <script src="@routes.Assets.at("js/creative.js")"></script>
+                        <!-- INTRO INFORMATIO-->
+                    <div class="col-lg-10 col-lg-offset-1">
+                        <p>Wadham Ball will donate a portion of ticket sales to a charity and also allow for an optional extra donation at ticket purchase. </p>
+                        <p>The charity we will donate to has not been determined yet.</p>
+                    </div>
+                </div>
+            </div>
+                <!-- /container -->
+        </div>
+        <img src="/assets/images/divider.png" alt="Divider" height="120px" class="divider">
+            <!-- /f -->
 
+            <!-- ========== CAROUSEL SECTION ========== -->
+        <section id="committee" name="committee"></section>
+        <div id="f">
+            <div class="container">
+                <div class="row centered">
+                    <h3>COMMITTEE</h3>
+                    <p class="centered"><i class="icon icon-circle"></i><i class="icon icon-circle"></i><i class="icon icon-circle"></i></p>
+
+                    <div class="col-lg-6 col-lg-offset-3">
+                        <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+                                <!-- Wrapper for slides -->
+                            <div class="carousel-inner">
+                                <div class="item active centered">
+                                    <img class="img-responsive" style="float:left" src="/assets/images/c1.png" alt="">
+                                    <div class="committee-text"><br/><br/>
+                                    <h3 class="committee">PRESIDENT:<br />Lyndsey Starr</h3></div>
+                                </div>
+                                <div class="item centered">
+                                    <img class="img-responsive" style="float:left" src="/assets/images/c2.png" alt="">
+                                    <div class="committee-text"><br/><h3 class="committee">TREASURER:<br />James Reid</h3><br/><br/><p>
+                                        Treasury Team:<br/>Sabrina Al Khafaji</p></div>
+                                </div>
+                                <div class="item centered">
+                                    <img class="img-responsive" style="float:left" src="/assets/images/c3.png" alt="">
+                                    <div class="committee-text"><br/><h3 class="committee">CREATIVE VP:<br />Alex Wickens</h3>
+                                    <p>Creative Team:<br/>Anna Seccombe<br/>Tilda Agace<br/>Ruby O'Grady<br/>Charlotte Jackson<br/>Mannat Malhi</p></div>
+                                </div>
+                                <div class="item centered">
+                                    <img class="img-responsive" style="float:left" src="/assets/images/c4.png" alt="">
+                                    <div class="committee-text"><br/><h3 class="committee">LOGISTICS VP:<br />Zera Ong</h3>
+                                    <p>Logistics Team:<small><br/>Rowan Howell, Rebecca Rose<br/>Katharina Anders, Liam Hyde<br/>Esi Armah-Tetteh, Farieha Altaf </p></small></div>
+                                </div>
+                            </div>
+                            <br>
+                            <br>
+                            <ol class="carousel-indicators">
+                                <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
+                                <li data-target="#carousel-example-generic" data-slide-to="1"></li>
+                                <li data-target="#carousel-example-generic" data-slide-to="2"></li>
+                                <li data-target="#carousel-example-generic" data-slide-to="3"></li>
+                            </ol>
+                        </div>
+                    </div>
+                        <!-- col-lg-8 -->
+                </div>
+                    <!-- row -->
+            </div>
+            <img src="/assets/images/divider.png" alt="Divider" height="120px" class="divider">
+
+            Website by Edoardo Pirovano and Richard Appleby
+                <!-- container -->
+        </div>
+
+            <!-- Bootstrap core JavaScript
+    ================================================== -->
+            <!-- Placed at the end of the document so the pages load faster -->
+        <script src="/assets/js/classie.js"></script>
+        <script src="/assets/js/bootstrap.min.js"></script>
+        <script src="/assets/js/smoothscroll.js"></script>
+        <script src="/assets/js/main.js"></script>
+        <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAhMyGJTp2qZrLgX_It6Dn4DJg2KfnORIY&callback=initMap">
+    </script>
     </body>
-
 </html>
