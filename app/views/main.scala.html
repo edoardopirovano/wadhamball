@@ -1,3 +1,9 @@
+@(emailForm: Form[Email])(implicit flash: play.api.mvc.Flash, messages: Messages)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -128,6 +134,25 @@
                         <p>As darkness falls and clocks chime <i>tick tock</i> the present will transform into a nonsensical luminous grinning utopia. Because as the Cheshire Cat declares, imagination is the only weapon in the war against reality.</p>
                     </div>
                 </div>
+                @flash.get("success").map { message =>
+                    <div class="alert-message success">
+                        <strong>@message!</strong>
+                    </div>
+                }
+
+                @form(routes.Application.subscribe()) {
+
+                    <fieldset>
+
+                    @inputText(emailForm("email"), '_label -> "Subscribe to our mailing list")
+
+                    </fieldset>
+
+                    <div class="actions">
+                        <input type="submit" value="Subscribe" class="btn btn-info" style="margin: 10px">
+                    </div>
+
+                }
             </div>
                 <!-- /container -->
         </div>
@@ -143,8 +168,8 @@
                         <!-- INTRO INFORMATIO-->
                     <div class="col-lg-10 col-lg-offset-1">
                         <p>Tickets go on sale at 5pm on Thursday of 2nd week.</p>
-                        <p>Non-dining tickets: 130</p>
-                        <p>Dining tickets: 175</p>
+                        <p>Non-dining tickets: £130</p>
+                        <p>Dining tickets: £175</p>
                         <p>
                             <a type="button" class="btn btn-info" href="/tickets" disabled="disabled">Buy Tickets</a>
                         </p>
@@ -183,7 +208,7 @@
                         <!-- INTRO INFORMATIO-->
                     <div class="col-lg-10 col-lg-offset-1">
                         <h4>Eat me. Drink me.</h4>
-                        <p>Wonderland will play host to a deliciously surreal feast, filled with gastronomic delights and wildly-tasty concoctions. A three course meal to lull you into a state of synaesthetic wonder- even the Mad Hatter couldn't conjure up...</p>
+                        <p>Wonderland will play host to a deliciously surreal feast, filled with gastronomic delights and wildly tasty concoctions. A three course meal to lull you into a state of synaesthetic wonder- even the Mad Hatter couldn't conjure up...</p>
                         <p>As you venture deeper into the rabbit hole, you'll discover a mesmerising display of culinary wonders to welcome you. The buzz of street food, sugary treats and hidden bars will cater to your every whim.</p>
                         <p>We have also curated a selection of the finest mixology that will mesmerise, shock and leave you curiouser and curiouser...</p>
                     </div>

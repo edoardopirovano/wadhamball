@@ -5,6 +5,7 @@ import javax.inject.Inject
 
 import dao.{TicketDAO, EmailsDAO}
 import models.{Email, _}
+import org.h2.jdbc.JdbcSQLException
 import play.api._
 import play.api.data.Form
 import play.api.data.Forms.{email, mapping, _}
@@ -70,7 +71,7 @@ class Application @Inject() (emailsDAO: EmailsDAO, ticketDAO: TicketDAO, mailer:
   def index = Action { Home }
 
   def home = Action.async { implicit rs =>
-    Future { Ok(html.main())}
+    Future { Ok(html.main(emailForm))}
   }
 
   def subscription = Action.async { implicit rs =>
@@ -81,9 +82,12 @@ class Application @Inject() (emailsDAO: EmailsDAO, ticketDAO: TicketDAO, mailer:
     emailForm.bindFromRequest.fold(
       formWithErrors => Future { BadRequest(html.subscription(formWithErrors)) },
       email => {
-        for {
-          _ <- emailsDAO.insert(email)
-        } yield Subscribe.flashing("success" -> "Email %s has been added".format(email.email))
+        try {
+          emailsDAO.insert(email)
+          Future { Home.flashing("success" -> "Email %s has been added".format(email.email)) }
+        } catch {
+          case ex: JdbcSQLException => Future { Home.flashing("success" -> "Email %s already present".format(email.email)) }
+        }
       })
   }
 
