@@ -40,6 +40,9 @@ with HasDatabaseConfigProvider[JdbcProfile] {
   def getAll: Future[Seq[Ticket]] =
     db.run(tickets.result)
 
+  def getEmails: Future[Seq[String]] =
+    db.run(tickets.map(_.email).result)
+
   def getUnpaid: Future[Seq[Ticket]] =
     db.run(tickets.filter(_.finalTransaction.isEmpty).result)
 

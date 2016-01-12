@@ -29,8 +29,8 @@ class EmailsDAO @Inject()(protected val dbConfigProvider: DatabaseConfigProvider
   val emails = TableQuery[Emails]
 
   /** Get all emails **/
-  def getAll: Future[Seq[Email]] =
-    db.run(emails.result)
+  def getAll: Future[Seq[String]] =
+    db.run(emails.map(_.email).result)
 
   /** Insert a new email */
   def insert(email: Email): Future[Unit] =

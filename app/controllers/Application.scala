@@ -104,7 +104,10 @@ class Application @Inject() (emailsDAO: EmailsDAO, ticketDAO: TicketDAO, mailer:
     emailSendForm.bindFromRequest.fold(
       formWithErrors => Future { BadRequest(html.sendmail(formWithErrors)) },
       emailRequest => {
-        val response = mailer.sendMail(Await.result(emailsDAO.getAll, Duration.Inf).map(email => email.email), emailRequest.subject, emailRequest.content, true)
+        val mailingListEmails = emailsDAO.getAll
+        val ticketEmails = ticketDAO.getEmails
+        val allEmails = Await.result(mailingListEmails, Duration.Inf).toSet.union(Await.result(ticketEmails, Duration.Inf).toSet)
+        val response = mailer.sendMail(allEmails.toSeq, emailRequest.subject, emailRequest.content, true)
         if (!Await.result(response, Duration.Inf)) {
           Logger.error("Failed to send an email!")
           Future { EmailSend.flashing("failure" -> "Message failed to send") }
