@@ -20,7 +20,8 @@ trait TicketComponent { self: HasDatabaseConfigProvider[JdbcProfile] =>
     def depositTransaction = column[Option[String]]("DEPOSITTRANSACTION")
     def finalTransaction = column[Option[String]]("FINALTRANSACTION")
     def isDining = column[Option[Boolean]]("ISDINING")
-    def * = (id.?, firstName, lastName, email, depositTransaction, finalTransaction, isDining) <> (Ticket.tupled, Ticket.unapply)
+    def donation = column[Long]("DONATION")
+    def * = (id.?, firstName, lastName, email, depositTransaction, finalTransaction, isDining, donation) <> (Ticket.tupled, Ticket.unapply)
   }
 }
 

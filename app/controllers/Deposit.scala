@@ -24,6 +24,8 @@ class Deposit @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: Br
 
   val depositPrice = 65
 
+  val ticketPrice = 130
+
   val transactionFee = 3
 
   val diningFee = 45
@@ -46,6 +48,13 @@ class Deposit @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: Br
     "Best regards,<br />" +
     "Wadham Ball Committee")
 
+  val ticketBoughtEmailText = StringContext("Hello ", ",<br /><br />" +
+    "Thank you for buying your ticket to Wadham Ball 2016! Your ticket reference is ", ". " +
+    "We look forward to seeing you at Wadham Ball 2016.<br /><br />" +
+    "If you have any questions, feel free to send an email to <a href='mailto:ball.president@wadh.ox.ac.uk'>ball.president@wadh.ox.ac.uk</a> for help.<br /><br />" +
+    "Best regards,<br />" +
+    "Wadham Ball Committee")
+
   val depositForm = Form(
     mapping(
       "firstName" -> nonEmptyText(1, 50),
@@ -62,6 +71,18 @@ class Deposit @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: Br
       "diningUpgrade" -> boolean,
       "payment_method_nonce" -> nonEmptyText
     )(SettleForm.apply)(SettleForm.unapply))
+
+  val wadhamBuyForm = Form(
+    mapping(
+      "firstName" -> nonEmptyText(1, 50),
+      "lastName" -> nonEmptyText(1, 50),
+      "email" -> email
+        .verifying("Must be a Wadham email address", email => email.contains("@wadh.ox.ac.uk"))
+        .verifying("This email has already been used to buy a ticket", email => !Await.result(ticketDAO.contains(email), Duration.Inf)),
+      "diningUpgrade" -> boolean,
+      "donation" -> default(number(min=0, max=100), 0),
+      "payment_method_nonce" -> nonEmptyText
+    )(WadhamBuyForm.apply)(WadhamBuyForm.unapply))
 
   val deposit = Action.async { implicit rs =>
     Future { Ok(html.deposit(depositForm, braintree.getToken, false)) }
@@ -92,6 +113,15 @@ class Deposit @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: Br
     html.settle(settleForm, braintree.getToken, failed, Await.result(name, Duration.Inf), Await.result(diningAvail, Duration.Inf), Await.result(alreadyPaid, Duration.Inf), id)
   }
 
+  def wadhambuy = Action.async { implicit rs =>
+    Future { Ok(getWadhamBuy(wadhamBuyForm, false)) }
+  }
+
+  private def getWadhamBuy(form: Form[WadhamBuyForm], failed: Boolean)(implicit rs: Request[AnyContent]) = {
+    val diningAvail = ticketDAO.diningAvailable
+    html.wadhambuy(form, braintree.getToken, failed, Await.result(diningAvail, Duration.Inf))
+  }
+
   def doSettle = Action.async { implicit rs =>
     settleForm.bindFromRequest.fold(
       formWithErrors => Future { BadRequest(getSettlePage(settleForm.get.id, false)) },
@@ -118,6 +148,30 @@ class Deposit @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: Br
         }
         error match {
           case true => Future { BadRequest(getSettlePage(settleRequest.id, true)) }
+          case false => Future { Ok(html.paid()) }
+        }
+      })
+  }
+
+  def doWadhamBuy = Action.async { implicit rs =>
+    wadhamBuyForm.bindFromRequest.fold(
+      formWithErrors => Future { BadRequest(getWadhamBuy(formWithErrors, false)) },
+      buyRequest => {
+        var toPay = ticketPrice + transactionFee
+        if (buyRequest.diningUpgrade) toPay += diningFee
+        toPay += buyRequest.donation
+        var error = false
+        val diningAvail = ticketDAO.diningAvailable
+        if (!Await.result(diningAvail, Duration.Inf) && buyRequest.diningUpgrade) error = true
+        else braintree.doTransaction(toPay, buyRequest.payment_method_nonce) match {
+          case Some(transactionId) =>
+            val ticketId = Await.result(ticketDAO.insert(new Ticket(None, buyRequest.firstName, buyRequest.lastName, buyRequest.email, None, Some(transactionId), Some(buyRequest.diningUpgrade), buyRequest.donation)), Duration.Inf)
+            mailer.sendMail(Seq(buyRequest.email), allPaidEmailSubject, ticketBoughtEmailText.s(buyRequest.firstName, ticketId), unsub = false)
+              .map((success:Boolean) => if (!success) Logger.error("Email failed to send to " + buyRequest.email))
+          case None => error = true
+        }
+        error match {
+          case true => Future { BadRequest(getWadhamBuy(wadhamBuyForm, true)) }
           case false => Future { Ok(html.paid()) }
         }
       })

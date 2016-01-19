@@ -42,8 +42,8 @@ private[bootstrap] object InitialData {
   )
 
   def tickets = Seq(
-    Ticket(Some(1), "Edoardo", "Pirovano", "edododo_do@yahoo.com", Some("abcde"), None, Some(true)),
-    Ticket(Some(2), "Edoardo", "Pirovano", "edododo_do@yahoo.com", Some("abcde"), Some("qwerty"), None),
-    Ticket(Some(3), "Richard", "Appleby", "edododo_do@yahoo.com", Some("abcde"), None, None)
+    Ticket(Some(1), "Edoardo", "Pirovano", "edododo_do@yahoo.com", Some("abcde"), None, Some(true), 0),
+    Ticket(Some(2), "Edoardo", "Pirovano", "edododo_do@yahoo.com", Some("abcde"), Some("qwerty"), None, 0),
+    Ticket(Some(3), "Richard", "Appleby", "edododo_do@yahoo.com", Some("abcde"), None, None, 0)
   )
 }
