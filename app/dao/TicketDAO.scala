@@ -31,7 +31,8 @@ with HasDatabaseConfigProvider[JdbcProfile] {
 
   import driver.api._
 
-  val maxDining = 139
+  val maxDining = 138
+  val maxTickets = 1138
 
   val tickets = TableQuery[Tickets]
 
