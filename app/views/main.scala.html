@@ -181,7 +181,8 @@ ga('require', 'linkid');
                         <p>Non-dining tickets: £130</p>
                         <p>Dining tickets: £175</p>
                         <p>
-                            <a type="button" class="btn btn-info" href="/tickets" disabled="disabled">Buy Tickets</a>
+                            <!-- 1454000400000 -->
+                            <a type="button" class="btn btn-info" href="/tickets" @if(System.currentTimeMillis() < 1454000400000L) { disabled="disabled" } >Buy Tickets</a>
                         </p>
                     </div>
                 </div>

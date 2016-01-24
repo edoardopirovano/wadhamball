@@ -12,6 +12,8 @@ POST        /unsubscribe               controllers.Application.unsubscribe(recip
 GET         /deposit                   controllers.Deposit.deposit
 GET         /wadhambuy                 controllers.Deposit.wadhambuy
 POST        /wadhambuy                 controllers.Deposit.doWadhamBuy
+GET         /tickets                   controllers.Ticketing.buy
+POST        /tickets                   controllers.Ticketing.doBuy
 GET         /settle/:id                controllers.Deposit.settle(id: Int)
 POST        /settle                    controllers.Deposit.doSettle
 GET         /admin/sendmail            controllers.Application.sendmail

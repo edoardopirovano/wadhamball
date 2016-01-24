@@ -113,9 +113,11 @@ class Deposit @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: Br
     html.settle(settleForm, braintree.getToken, failed, Await.result(name, Duration.Inf), Await.result(diningAvail, Duration.Inf), Await.result(alreadyPaid, Duration.Inf), id)
   }
 
-  def wadhambuy = Action.async { implicit rs =>
-    Future { Ok(getWadhamBuy(wadhamBuyForm, false)) }
-  }
+//  def wadhambuy = Action.async { implicit rs =>
+//    Future { Ok(getWadhamBuy(wadhamBuyForm, false)) }
+//  }
+
+  def wadhambuy = Action { Redirect(routes.Ticketing.buy()) }
 
   private def getWadhamBuy(form: Form[WadhamBuyForm], failed: Boolean)(implicit rs: Request[AnyContent]) = {
     val diningAvail = ticketDAO.diningAvailable
@@ -153,28 +155,30 @@ class Deposit @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: Br
       })
   }
 
-  def doWadhamBuy = Action.async { implicit rs =>
-    wadhamBuyForm.bindFromRequest.fold(
-      formWithErrors => Future { BadRequest(getWadhamBuy(formWithErrors, false)) },
-      buyRequest => {
-        var toPay = ticketPrice + transactionFee
-        if (buyRequest.diningUpgrade) toPay += diningFee
-        toPay += buyRequest.donation
-        var error = false
-        val diningAvail = ticketDAO.diningAvailable
-        if (!Await.result(diningAvail, Duration.Inf) && buyRequest.diningUpgrade) error = true
-        else braintree.doTransaction(toPay, buyRequest.payment_method_nonce) match {
-          case Some(transactionId) =>
-            val ticketId = Await.result(ticketDAO.insert(new Ticket(None, buyRequest.firstName, buyRequest.lastName, buyRequest.email, None, Some(transactionId), Some(buyRequest.diningUpgrade), buyRequest.donation)), Duration.Inf)
-            mailer.sendMail(Seq(buyRequest.email), allPaidEmailSubject, ticketBoughtEmailText.s(buyRequest.firstName, ticketId), unsub = false)
-              .map((success:Boolean) => if (!success) Logger.error("Email failed to send to " + buyRequest.email))
-          case None => error = true
-        }
-        error match {
-          case true => Future { BadRequest(getWadhamBuy(wadhamBuyForm, true)) }
-          case false => Future { Ok(html.paid()) }
-        }
-      })
-  }
+//  def doWadhamBuy = Action.async { implicit rs =>
+//    wadhamBuyForm.bindFromRequest.fold(
+//      formWithErrors => Future { BadRequest(getWadhamBuy(formWithErrors, false)) },
+//      buyRequest => {
+//        var toPay = ticketPrice + transactionFee
+//        if (buyRequest.diningUpgrade) toPay += diningFee
+//        toPay += buyRequest.donation
+//        var error = false
+//        val diningAvail = ticketDAO.diningAvailable
+//        if (!Await.result(diningAvail, Duration.Inf) && buyRequest.diningUpgrade) error = true
+//        else braintree.doTransaction(toPay, buyRequest.payment_method_nonce) match {
+//          case Some(transactionId) =>
+//            val ticketId = Await.result(ticketDAO.insert(new Ticket(None, buyRequest.firstName, buyRequest.lastName, buyRequest.email, None, Some(transactionId), Some(buyRequest.diningUpgrade), buyRequest.donation)), Duration.Inf)
+//            mailer.sendMail(Seq(buyRequest.email), allPaidEmailSubject, ticketBoughtEmailText.s(buyRequest.firstName, ticketId), unsub = false)
+//              .map((success:Boolean) => if (!success) Logger.error("Email failed to send to " + buyRequest.email))
+//          case None => error = true
+//        }
+//        error match {
+//          case true => Future { BadRequest(getWadhamBuy(wadhamBuyForm, true)) }
+//          case false => Future { Ok(html.paid()) }
+//        }
+//      })
+//  }
+
+  def doWadhamBuy = Action { Redirect(routes.Ticketing.buy()) }
 
 }

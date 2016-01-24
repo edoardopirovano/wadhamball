@@ -70,6 +70,9 @@ with HasDatabaseConfigProvider[JdbcProfile] {
   def count: Future[Int] =
     db.run(tickets.length.result)
 
+  def diningCount: Future[Int] =
+    db.run(tickets.filter(_.isDining).length.result)
+
   def addPayment(id: Long, transaction: String): Future[Unit] =
     db.run((for { t <- tickets if t.id === id } yield t.finalTransaction).update(Some(transaction))).map(_ => ())
 
