@@ -45,13 +45,13 @@ class Ticketing @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: 
     "If you have any questions, feel free to send an email to <a href='mailto:ball.president@wadh.ox.ac.uk'>ball.president@wadh.ox.ac.uk</a> for help.<br /><br />" +
     "Best regards,<br />" +
     "Wadham Ball Committee")
-
+//"This email has already been used to pay a deposit",
   val buyForm = Form(
     mapping(
       "noOfTickets" -> number(min=1, max=maxTicketsPerPerson),
       "firstNames" -> seq(nonEmptyText(1, 50)),
       "lastNames" -> seq(nonEmptyText(1, 50)),
-      "emails" -> seq(email),
+      "emails" -> seq(email.verifying("This email has already been used to buy a ticket", email => !Await.result(ticketDAO.contains(email), Duration.Inf))),
       "diningUpgrade0" -> default(boolean, false),
       "diningUpgrade1" -> default(boolean, false),
       "diningUpgrade2" -> default(boolean, false),
@@ -61,8 +61,9 @@ class Ticketing @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: 
 
 
   private def getBuy(form: Form[BuyForm], failed: Option[String])(implicit rs: Request[AnyContent]) = {
-    val diningAvail = ticketDAO.diningAvailable
-    html.tickets(form, braintree.getToken, failed, Await.result(diningAvail, Duration.Inf), maxTicketsPerPerson)
+    val dining = ticketDAO.diningCount
+    val tickets = ticketDAO.count
+    html.tickets(form, braintree.getToken, failed, (currentlyProcessingDining.get() + Await.result(dining, Duration.Inf)) <= maxDining, maxTicketsPerPerson, (currentlyProcessing.get() + Await.result(tickets, Duration.Inf)) > maxTickets)
   }
 
   def buy = Action.async { implicit rs =>

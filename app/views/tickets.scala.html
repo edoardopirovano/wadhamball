@@ -1,4 +1,4 @@
-@(buyForm: Form[BuyForm], clientToken: String, didFail: Option[String], upgradeAvailable: Boolean, maxTickets: Int)(implicit flash: play.api.mvc.Flash, messages: Messages)
+@(buyForm: Form[BuyForm], clientToken: String, didFail: Option[String], upgradeAvailable: Boolean, maxTickets: Int, soldOut: Boolean)(implicit flash: play.api.mvc.Flash, messages: Messages)
 
 @import helper._
 
@@ -16,82 +16,89 @@
             </div>
         } else {
 
-            @if(didFail.isDefined) {
+            @if(soldOut) {
                 <div class="alert-message warning">
-                    <strong>There was an error processing your transaction: @(didFail.get)</strong>
+                    <strong>Tickets are currently all reserved, please check back later as there will be a waiting list and potentially more tickets!</strong>
                 </div>
-            }
+            } else {
 
-            <p>You can buy tickets for £130 (plus a transaction fee of £3 that's set by our card processor, sorry!) each here.<br />
-                You can also add an optional donation which will go to The Gatehouse and The Refugee Council.<br/>
-                @if(upgradeAvailable){
-                    You can also optionally upgrade to a dining ticket for an extra £45 each, while these are still available.
-                } else {
-                    <b>Dining upgrades are now sold out unfortunately.</b>
+                @if(didFail.isDefined) {
+                    <div class="alert-message warning">
+                        <strong>There was an error processing your transaction: @(didFail.get)</strong>
+                    </div>
                 }
-            </p>
 
-            @form(routes.Ticketing.doBuy()) {
-
-                <fieldset>
-                    @select(buyForm("noOfTickets"), options((1 to maxTickets).map(_.toString).toList), '_label -> "Number of tickets", 'onchange->"updatePrice()")
-                    @for(i <- 0 until maxTickets) {
-                        <div id="person@(i.toString)" @if(i != 0) { style="display: none" } >
-                        <b>Person @((i+1).toString):</b>
-                        @inputText(buyForm("firstNames["+i+"]"), '_label -> "First Name", '_showConstraints -> false)
-                        @inputText(buyForm("lastNames["+i+"]"), '_label -> "Last Name", '_showConstraints -> false)
-                        @inputText(buyForm("emails["+i+"]"), '_label -> "Email", '_showConstraints -> false)
-                        @if(upgradeAvailable) {
-                            @checkbox(buyForm("diningUpgrade"+i), '_label -> "Dining Upgrade (+45GBP)?", 'onchange->"updatePrice()")
-                        } else {
-                            @checkbox(buyForm("diningUpgrade"+i), '_label -> "Dining Upgrade?", 'disabled -> "disabled")
-                        }
-                        </div>
+                <p>You can buy tickets for £130 (plus a transaction fee of £3 that's set by our card processor, sorry!) each here.<br />
+                    You can also add an optional donation which will go to The Gatehouse and The Refugee Council.<br/>
+                    @if(upgradeAvailable){
+                        You can also optionally upgrade to a dining ticket for an extra £45 each, while these are still available.
+                    } else {
+                        <b>Dining upgrades are now sold out unfortunately.</b>
                     }
-                    <b>Optional donation:</b>
-                    @inputText(buyForm("donation"), '_label -> "Donation?", '_showConstraints -> false, 'onkeyup->"updatePrice()")
-                    <br />
-                    <h2>Total due: £<span id="amount">133</span></h2>
-                    <div id="payment-form"></div>
-                </fieldset>
+                </p>
 
-                <div class="actions input-group">
-                    <input type="submit" value="Buy Ticket" class="btn primary" style="margin-right: 150px">
-                </div>
+                @form(routes.Ticketing.doBuy()) {
 
-                <small>Payment processing powered by <a href="https://www.braintreepayments.com/">Braintree</a>.</small>
-
-                <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
-                <script>
-                        braintree.setup("@clientToken", "dropin", {
-                          container: "payment-form"
-                        });
-                        function updatePrice() {
-                            var noOfTickets = parseInt($("#noOfTickets").val());
-                            var i = 1;
-                            while (i < noOfTickets) {
-                                var div = $("#person"+i).first();
-                                div.show();
-                                div.find(":input").prop("disabled", false);
-                                i += 1
+                    <fieldset>
+                        @select(buyForm("noOfTickets"), options((1 to maxTickets).map(_.toString).toList), '_label -> "Number of tickets", 'onchange->"updatePrice()")
+                        @for(i <- 0 until maxTickets) {
+                            <div id="person@(i.toString)" @if(i != 0) { style="display: none" } >
+                            <b>Person @((i+1).toString):</b>
+                            @inputText(buyForm("firstNames["+i+"]"), '_label -> "First Name", '_showConstraints -> false)
+                            @inputText(buyForm("lastNames["+i+"]"), '_label -> "Last Name", '_showConstraints -> false)
+                            @inputText(buyForm("emails["+i+"]"), '_label -> "Email", '_showConstraints -> false)
+                            @if(upgradeAvailable) {
+                                @checkbox(buyForm("diningUpgrade"+i), '_label -> "Dining Upgrade (+45GBP)?", 'onchange->"updatePrice()")
+                            } else {
+                                @checkbox(buyForm("diningUpgrade"+i), '_label -> "Dining Upgrade?", 'disabled -> "disabled")
                             }
-                            while (i < @(maxTickets)) {
-                                var div = $("#person"+i).first();
-                                div.hide();
-                                div.find(":input").prop("disabled", true);
-                                i += 1;
-                            }
-                            var toPay = noOfTickets * 133;
-                            $('input[type=checkbox]').each(function () {
-                                       if (this.checked && !this.disabled) {
-                                           toPay += 45;
-                                       }
-                            });
-                            toPay += (parseInt($("#donation").val()) || 0);
-                            $("#amount").text(toPay);
+                            </div>
                         }
-                        $(window).load(updatePrice);
-                        </script>
+                        <b>Optional donation:</b>
+                        @inputText(buyForm("donation"), '_label -> "Donation?", '_showConstraints -> false, 'onkeyup->"updatePrice()")
+                        <br />
+                        <h2>Total due: £<span id="amount">133</span></h2>
+                        <div id="payment-form"></div>
+                    </fieldset>
+
+                    <div class="actions input-group">
+                        <input type="submit" value="Buy Ticket" class="btn primary" style="margin-right: 150px">
+                    </div>
+
+                    <small>Payment processing powered by <a href="https://www.braintreepayments.com/">Braintree</a>.</small>
+
+                    <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+                    <script>
+                            braintree.setup("@clientToken", "dropin", {
+                              container: "payment-form"
+                            });
+                            function updatePrice() {
+                                var noOfTickets = parseInt($("#noOfTickets").val());
+                                var i = 1;
+                                while (i < noOfTickets) {
+                                    var div = $("#person"+i).first();
+                                    div.show();
+                                    div.find(":input").prop("disabled", false);
+                                    i += 1
+                                }
+                                while (i < @(maxTickets)) {
+                                    var div = $("#person"+i).first();
+                                    div.hide();
+                                    div.find(":input").prop("disabled", true);
+                                    i += 1;
+                                }
+                                var toPay = noOfTickets * 133;
+                                $('input[type=checkbox]').each(function () {
+                                           if (this.checked && !this.disabled) {
+                                               toPay += 45;
+                                           }
+                                });
+                                toPay += (parseInt($("#donation").val()) || 0);
+                                $("#amount").text(toPay);
+                            }
+                            $(window).load(updatePrice);
+                            </script>
+                }
             }
         }
     </div>
