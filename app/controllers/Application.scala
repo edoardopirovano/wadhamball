@@ -45,11 +45,12 @@ class Application @Inject() (emailsDAO: EmailsDAO, ticketDAO: TicketDAO, mailer:
     )(identity[String])(Option.apply)
   )
 
-  val reminderEmailSubject = "Final Ticket Balance Reminder"
+  val reminderEmailSubject = "Ticket Balance Overdue"
 
   val reminderEmailText = StringContext("Hello ", ",<br /><br />" +
-    "Just a quick reminder that the remaining balance for your ticket to Wadham Ball 2016 is due. Your remaining balance can be paid here:<br /><br />" +
+    "Your remaining balance for your Wadham Ball 2016 ticket is now overdue. Your remaining balance can be paid here:<br /><br />" +
     "<a href='http://wadhamball.co.uk/settle/", "'>http://wadhamball.co.uk/settle/","</a><br /><br />" +
+    "Please note that after the main ticket sale opens on Thursday 28 January at 5pm we may no longer refund your deposit if you fail to pay and/or may not keep your ticket saved for you.<br /><br />" +
     "We look forward to seeing you at Wadham Ball 2016.<br /><br />" +
     "If you have any questions, feel free to send an email to <a href='mailto:ball.president@wadh.ox.ac.uk'>ball.president@wadh.ox.ac.uk</a> for help.<br /><br />" +
     "Best regards,<br />" +
