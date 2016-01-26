@@ -22,13 +22,11 @@ import scala.concurrent.{Await, Future}
 import scala.concurrent.duration.Duration
 
 class Ticketing @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: Braintree, val messagesApi: MessagesApi) extends Controller with I18nSupport {
-  val ticketPrice = 130
-
-  val transactionFee = 3
+  val ticketPrice = 133
 
   val maxTicketsPerPerson = 3
 
-  val diningFee = 45
+  val diningFee = 46
 
   val maxDining = 138
 
@@ -75,7 +73,7 @@ class Ticketing @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: 
       formWithErrors => Future { BadRequest(getBuy(formWithErrors, None)) },
       buyRequest => {
         // Calculate price
-        var toPay = (ticketPrice + transactionFee) * buyRequest.noOfTickets
+        var toPay = ticketPrice * buyRequest.noOfTickets
         var dining = 0
         val diningUpgrades = Seq(buyRequest.diningUpgrade0, buyRequest.diningUpgrade1, buyRequest.diningUpgrade2)
         diningUpgrades.foreach(if (_) dining += 1)

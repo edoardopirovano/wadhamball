@@ -31,7 +31,7 @@
                 <p>You can buy tickets for £130 (plus a transaction fee of £3 that's set by our card processor, sorry!) each here.<br />
                     You can also add an optional donation which will go to The Gatehouse and The Refugee Council.<br/>
                     @if(upgradeAvailable){
-                        You can also optionally upgrade to a dining ticket for an extra £45 each, while these are still available.
+                        You can also optionally upgrade to a dining ticket for an extra £45 each (+£1 card processing), while these are still available.
                     } else {
                         <b>Dining upgrades are now sold out unfortunately.</b>
                     }
@@ -48,7 +48,7 @@
                             @inputText(buyForm("lastNames["+i+"]"), '_label -> "Last Name", '_showConstraints -> false)
                             @inputText(buyForm("emails["+i+"]"), '_label -> "Email", '_showConstraints -> false)
                             @if(upgradeAvailable) {
-                                @checkbox(buyForm("diningUpgrade"+i), '_label -> "Dining Upgrade (+45GBP)?", 'onchange->"updatePrice()")
+                                @checkbox(buyForm("diningUpgrade"+i), '_label -> "Dining Upgrade (+46GBP)?", 'onchange->"updatePrice()")
                             } else {
                                 @checkbox(buyForm("diningUpgrade"+i), '_label -> "Dining Upgrade?", 'disabled -> "disabled")
                             }
@@ -90,7 +90,7 @@
                                 var toPay = noOfTickets * 133;
                                 $('input[type=checkbox]').each(function () {
                                            if (this.checked && !this.disabled) {
-                                               toPay += 45;
+                                               toPay += 46;
                                            }
                                 });
                                 toPay += (parseInt($("#donation").val()) || 0);
