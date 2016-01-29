@@ -122,6 +122,10 @@ class Application @Inject() (emailsDAO: EmailsDAO, ticketDAO: TicketDAO, mailer:
     Future { Ok(html.sendreminder(reminderApprovalForm)) }
   }
 
+  def getSendConfirmationPage = Action.async { implicit rs =>
+    Future { Ok(html.sendconfirmation(reminderApprovalForm)) }
+  }
+
   def sendreminder = Action.async { implicit rs =>
     reminderApprovalForm.bindFromRequest.fold(
       formWithErrors => Future { BadRequest(html.sendreminder(formWithErrors)) },
@@ -135,6 +139,30 @@ class Application @Inject() (emailsDAO: EmailsDAO, ticketDAO: TicketDAO, mailer:
           if (errors.nonEmpty) {
             errors.foreach(err => Logger.error(err))
             Future { ReminderSend.flashing("failure" -> "Failed to send some reminders - see logs.") }
+          }
+          else Future { ReminderSend.flashing("success" -> "Message sent") }
+        }
+        else {
+          // Not confirmed, redisplay form with flashing failure
+          Future { ReminderSend.flashing("failure" -> "Admin did not confirm action") }
+        }
+      }
+    )
+  }
+
+  def sendConfirmation = Action.async { implicit rs =>
+    reminderApprovalForm.bindFromRequest.fold(
+      formWithErrors => Future { BadRequest(html.sendreminder(formWithErrors)) },
+      confirmationString => {
+        if (confirmationString.equalsIgnoreCase("confirm")) {
+          // Admin has confirmed, lets send some emails
+          val tickets = Await.result(ticketDAO.getAll, Duration.Inf)
+          val responses = for (ticket <- tickets) yield mailer.sendMail(Seq(ticket.email), confirmationEmailSubject, confirmationEmailText.s(ticket.firstName, ticket.id.get), false)
+          val response = Await.result(Future.sequence(responses), Duration.Inf)
+          val errors = response.zipWithIndex.collect { case (false, i) => s"""Error sending reminder for ticket ${tickets(i)}""" }
+          if (errors.nonEmpty) {
+            errors.foreach(err => Logger.error(err))
+            Future { ReminderSend.flashing("failure" -> "Failed to send some confirmations - see logs.") }
           }
           else Future { ReminderSend.flashing("success" -> "Message sent") }
         }

@@ -1,0 +1,31 @@
+@(reminderApprovalForm: Form[String])(implicit flash: play.api.mvc.Flash, messages: Messages)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+<!DOCTYPE html>
+<html>
+    <head><!-- CDN hosted by Cachefly -->
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/bootstrap.min.css")">
+        <link rel="stylesheet" type="text/css" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+    </head>
+    <body>
+        @flash.get("success").map { message =>
+            <div>
+                <strong>Succeeded:</strong> @message
+            </div>
+        }
+        @flash.get("failure").map { message =>
+            <div>
+                <strong>Confirmation not accepted:</strong> @message
+            </div>
+        }
+        @form(routes.Application.sendConfirmation()) {
+            @inputText(reminderApprovalForm("confirm"), '_label -> "Type 'confirm' to confirm.")
+            <div class="actions">
+                <input type="submit" value="Send Confirmations" class="btn primary">
+            </div>
+        }
+    </body>
+</html>
