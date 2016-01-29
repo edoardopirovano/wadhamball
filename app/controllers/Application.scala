@@ -56,7 +56,18 @@ class Application @Inject() (emailsDAO: EmailsDAO, ticketDAO: TicketDAO, mailer:
     "Best regards,<br />" +
     "Wadham Ball Committee")
 
-//  val sendForm = Form(
+  val confirmationEmailText = StringContext("Hello ", ",<br /><br />" +
+    "This email is to confirm that you have a ticket to Wadham Ball 2016. Your ticket ID is ", ".<br /><br />" +
+    "Because of the high load on our server during the ticket sale yesterday, a number of ticket confirmations failed to arrive. Hence, we are sending every ticket holder another ticket confirmation.<br /><br />" +
+    "You should receive one email for each ticket you bought, if this is not the case do get in touch so we can sort this out for you.<br /><br />" +
+    "We look forward to seeing you at Wadham Ball 2016.<br /><br />" +
+    "If you have any questions, feel free to send an email to <a href='mailto:ball.president@wadh.ox.ac.uk'>ball.president@wadh.ox.ac.uk</a> for help.<br /><br />" +
+    "Best regards,<br />" +
+    "Wadham Ball Committee")
+
+  val confirmationEmailSubject = "Wadham Ball 2016 Ticket Confirmation"
+
+  //  val sendForm = Form(
 //    mapping(
 //      "subject" -> nonEmptyText,
 //      "content" -> nonEmptyText,
