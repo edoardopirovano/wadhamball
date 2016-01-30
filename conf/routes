@@ -23,6 +23,7 @@ POST        /admin/sendreminder        controllers.Application.sendreminder
 GET         /admin/sendconfirmation    controllers.Application.getSendConfirmationPage
 POST        /admin/sendconfirmation    controllers.Application.sendConfirmation
 GET         /favicon.ico               controllers.Assets.at(path="/public", file="favicon.ico")
+GET         /robots.txt                controllers.Assets.at(path="/public", file="robots.txt")
 
 # Map static resources from the /public folder to the /assets URL path
 GET         /assets/*file              controllers.Assets.at(path="/public", file)
