@@ -92,8 +92,8 @@ class Ticketing @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: 
           error = Some("Not enough tickets available to fulfill your request currently.")
         if ((buyRequest.firstNames.length != buyRequest.noOfTickets) || (buyRequest.lastNames.length != buyRequest.noOfTickets) || (buyRequest.firstNames.length != buyRequest.noOfTickets))
           error = Some("An error occurred processing your input, please ensure you fill in every field correctly.")
-        if(System.currentTimeMillis() < 1454000400000L)
-          error = Some("Ticket sale is still closed.")
+        if(System.currentTimeMillis() < 1455642000000L)
+          error = Some("There are a limited number of tickets still available for Wadham Ball, the final ticket release will go live on Tuesday of 5th week (16th February) at 5pm.")
 
         // Perform transaction and update database
         if (error.isEmpty) braintree.doTransaction(toPay, buyRequest.payment_method_nonce) match {
