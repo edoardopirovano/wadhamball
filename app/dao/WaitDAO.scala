@@ -13,7 +13,7 @@ import scala.concurrent.Future
 trait WaitComponent { self: HasDatabaseConfigProvider[JdbcProfile] =>
   import driver.api._
 
-  class Emails(tag: Tag) extends Table[Email](tag, "EMAIL") {
+  class Emails(tag: Tag) extends Table[Email](tag, "WAIT") {
     def email = column[String]("EMAIL", O.PrimaryKey)
     def joinDate = column[Timestamp]("JOINDATE")
     def * = (email, joinDate) <> (Email.tupled, Email.unapply)
