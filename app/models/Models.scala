@@ -17,4 +17,6 @@ case class WadhamBuyForm(firstName: String, lastName: String, email: String, din
 
 case class BuyForm(noOfTickets: Int, firstNames: Seq[String], lastNames: Seq[String], emails: Seq[String], diningUpgrade0: Boolean, diningUpgrade1: Boolean, diningUpgrade2: Boolean, donation: Int, payment_method_nonce: String)
 
-case class SettleForm(id: Long, diningUpgrade: Boolean,payment_method_nonce: String )
+case class SettleForm(id: Long, diningUpgrade: Boolean, payment_method_nonce: String)
+
+case class UpgradeForm(id: Long, payment_method_nonce: String)

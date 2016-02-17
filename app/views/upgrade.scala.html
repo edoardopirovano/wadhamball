@@ -1,0 +1,56 @@
+@(settleForm: Form[UpgradeForm], clientToken: String, didFail: Boolean, clientString: Option[String], upgradeAvailable: Boolean, alreadyPaid: Boolean, id: Long)(implicit flash: play.api.mvc.Flash, messages: Messages)
+
+@import helper._
+
+@implicitFieldConstructor = @{ FieldConstructor(twitterBootstrapInput.f) }
+
+@template {
+
+    <div class="container">
+
+        <h1>Presale Tickets for Wadham Students</h1>
+
+        @if(didFail) {
+            <div class="alert-message warning">
+                <strong>There was an error processing your transaction, please try again later!</strong>
+            </div>
+        }
+
+        <p>You can upgrade your ticket to a dining one for £45 (plus a £2 transaction fee) here.</p>
+
+        @if(clientString.isEmpty) {
+            <div class="alert-message warning">
+                <strong>The link you followed appears to be invalid, please follow use link in the email you received!</strong>
+            </div>
+        } else {
+            <p>You are paying for: <b>@clientString.get</b></p>
+            @if(alreadyPaid) {
+                <div class="alert-message warning">
+                    <strong>This ticket has already been fully paid!</strong>
+                </div>
+            } else {
+                form(routes.Ticketing.doUpgrade()) {
+
+                    <fieldset>
+                        <input type="hidden" name="id" value="@id">
+                        <div id="payment-form"></div>
+                    </fieldset>
+
+                    <div class="actions input-group">
+                        <input type="submit" value="Upgrade (£47)" class="btn primary" style="margin-right: 150px">
+                    </div>
+
+                    <small>Payment processing powered by <a href="https://www.braintreepayments.com/">Braintree</a>.</small>
+
+                    <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
+                    <script>
+                            braintree.setup("@clientToken", "dropin", {
+                              container: "payment-form"
+                            });
+                            </script>
+                }
+            }
+        }
+    </div>
+
+}

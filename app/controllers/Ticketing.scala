@@ -57,13 +57,29 @@ class Ticketing @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: 
       "payment_method_nonce" -> nonEmptyText
     )(BuyForm.apply)(BuyForm.unapply))
 
+  val upgradeForm = Form(
+    mapping(
+      "id" -> longNumber(0),
+      "payment_method_nonce" -> nonEmptyText
+    )(UpgradeForm.apply)(UpgradeForm.unapply))
+
 
   private def getBuy(form: Form[BuyForm], failed: Option[String])(implicit rs: Request[AnyContent]) = {
     val dining = ticketDAO.diningCount
     val tickets = ticketDAO.count
     html.tickets(form, braintree.getToken, failed, (currentlyProcessingDining.get() + Await.result(dining, Duration.Inf)) <= maxDining, maxTicketsPerPerson, (currentlyProcessing.get() + Await.result(tickets, Duration.Inf)) > maxTickets)
   }
+  /*
+    private def getUpgrade(id: Long, failed: Option[String])(implicit rs: Request[AnyContent]) = {
+      val dining = ticketDAO.diningCount
+      val tickets = ticketDAO.count
+      html.upgrade(upgradeForm, braintree.getToken, failed, (currentlyProcessingDining.get() + Await.result(dining, Duration.Inf)) <= maxDining, maxTicketsPerPerson, (currentlyProcessing.get() + Await.result(tickets, Duration.Inf)) > maxTickets)
+    }
 
+    def upgrade(id: Int) = Action.async { implicit rs =>
+      Future { Ok(getBuy(buyForm, None)) }
+    }
+  */
   def buy = Action.async { implicit rs =>
     Future { Ok(getBuy(buyForm, None)) }
   }
@@ -115,5 +131,37 @@ class Ticketing @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: 
         }
       })
   }
+/*
+  def doUpgrade = Action.async { implicit rs =>
+    upgradeForm.bindFromRequest.fold(
+      formWithErrors => Future { BadRequest(getUpgrade(upgradeForm.get.id, Some("Invalid form submission, please try again."))) },
+      upgradeRequest => {
+        var error:Option[String] = None
+        val currentlySellingDining = currentlyProcessingDining.addAndGet(1)
+        val soldDiningCount = ticketDAO.diningCount
+        val isDining = ticketDAO.isDining(upgradeRequest.id)
+        if ((currentlySellingDining + Await.result(soldDiningCount, Duration.Inf)) > maxDining)
+          error = Some("Not enough dining tickets available to fulfill your request.")
+        if (Await.result(isDining, Duration.Inf))
+          error = Some("Ticket is already a dining ticket.")
+
+        if (error.isEmpty) braintree.doTransaction(47, upgradeRequest.payment_method_nonce) match {
+          case Some(transactionId) =>
+            val name = ticketDAO.getName(upgradeRequest.id)
+            val emailTo = ticketDAO.getEmail(upgradeRequest.id)
+            val addDining = ticketDAO.makeDining(upgradeRequest.id)
+            Await.result(addDining, Duration.Inf)
+            Await.result(paymentAdd, Duration.Inf)
+            mailer.sendMail(Seq(Await.result(emailTo, Duration.Inf).get), allPaidEmailSubject, allPaidEmailText.s(Await.result(name, Duration.Inf).get, settleRequest.id), unsub = false)
+              .map((success:Boolean) => if (!success) Logger.error("Email failed to send to " + Await.result(emailTo, Duration.Inf).get))
+          case None => error = true
+        }
+        error match {
+          case Some(_) => Future { BadRequest(getUpgrade(upgradeRequest.id, true)) }
+          case None => Future { Ok(html.paid()) }
+        }
+      })
+  }*/
+
 }
 

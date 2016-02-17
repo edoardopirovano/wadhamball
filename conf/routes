@@ -8,6 +8,7 @@ GET         /home                      controllers.Application.home
 GET         /paid                      controllers.Payment.paid
 GET         /subscription              controllers.Application.subscription
 GET         /subscribe                 controllers.Application.subscribe
+GET         /joinWait                 controllers.Application.joinWait
 POST        /unsubscribe               controllers.Application.unsubscribe(recipient: String)
 GET         /deposit                   controllers.Deposit.deposit
 GET         /wadhambuy                 controllers.Deposit.wadhambuy

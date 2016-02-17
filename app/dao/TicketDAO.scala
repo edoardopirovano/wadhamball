@@ -67,6 +67,9 @@ with HasDatabaseConfigProvider[JdbcProfile] {
   def hasPaid(id: Long): Future[Boolean] =
     db.run(tickets.filter(_.id === id).filterNot(_.finalTransaction.isEmpty).exists.result)
 
+  def isDining(id: Long): Future[Boolean] =
+    db.run(tickets.filter(_.id === id).filter(_.isDining).exists.result)
+
   def count: Future[Int] =
     db.run(tickets.length.result)
 

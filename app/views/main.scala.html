@@ -1,4 +1,4 @@
-@(emailForm: Form[Email])(implicit flash: play.api.mvc.Flash, messages: Messages)
+@(emailForm: Form[Email], waitingForm: Form[Email])(implicit flash: play.api.mvc.Flash, messages: Messages)
 
 @import helper._
 
@@ -91,9 +91,9 @@ ga('require', 'linkid');
                 <i class="icon-remove menu-close"></i>
                 <a href="#home" class="smoothScroll">Home</a>
                 <a href="#about" class="smoothScroll">About</a>
-                <a href="#tickets" class="smoothScroll">Tickets</a>
                 <a href="#entertainment" class="smoothScroll">Entertainment</a>
                 <a href="#food" class="smoothScroll">Food & Drink</a>
+                <a href="#tickets" class="smoothScroll">Tickets</a>
                 <a href="#location" class="smoothScroll">Location</a>
                 <a href="#charity" class="smoothScroll">Charity</a>
                 <a href="#committee" class="smoothScroll">Committee</a><br/>
@@ -170,28 +170,6 @@ ga('require', 'linkid');
         </div>
         <img src="/assets/images/divider.png" alt="Divider" height="120px" class="divider">
 
-        <section id="tickets" name="tickets"></section>
-        <div id="f">
-            <div class="container">
-                <div class="row">
-                    <h3>TICKETS</h3>
-                    <p class="centered"><i class="icon icon-circle"></i><i class="icon icon-circle"></i><i class="icon icon-circle"></i></p>
-
-                        <!-- INTRO INFORMATIO-->
-                    <div class="col-lg-10 col-lg-offset-1">
-                        <p>There are a limited number of tickets still available for Wadham Ball, the final ticket release will go live on Tuesday of 5th week (16th February) at 5pm.</p>
-                        <p>Non-dining tickets: £130</p>
-                        <p>Dining tickets: £175</p>
-                        <p>
-                            <a type="button" class="btn btn-info" href="/tickets" @if(System.currentTimeMillis() < 1455642000000L) { disabled="disabled" } >Buy Tickets</a>
-                        </p>
-                    </div>
-                </div>
-            </div>
-                <!-- /container -->
-        </div>
-        <img src="/assets/images/divider.png" alt="Divider" height="120px" class="divider">
-
         <section id="entertainment" name="entertainment"></section>
         <div id="f">
             <div class="container">
@@ -223,6 +201,45 @@ ga('require', 'linkid');
                         <p>Wonderland will play host to a deliciously surreal feast, filled with gastronomic delights and wildly tasty concoctions. A three course meal to lull you into a state of synaesthetic wonder- even the Mad Hatter couldn't conjure up...</p>
                         <p>As you venture deeper into the rabbit hole, you'll discover a mesmerising display of culinary wonders to welcome you. The buzz of street food, sugary treats and hidden bars will cater to your every whim.</p>
                         <p>We have also curated a selection of the finest mixology that will mesmerise, shock and leave you curiouser and curiouser...</p>
+                    </div>
+                </div>
+            </div>
+                <!-- /container -->
+        </div>
+        <img src="/assets/images/divider.png" alt="Divider" height="120px" class="divider">
+
+        <section id="tickets" name="tickets"></section>
+        <div id="f">
+            <div class="container">
+                <div class="row">
+                    <h3>TICKETS</h3>
+                    <p class="centered"><i class="icon icon-circle"></i><i class="icon icon-circle"></i><i class="icon icon-circle"></i></p>
+
+                        <!-- INTRO INFORMATIO-->
+                    <div class="col-lg-10 col-lg-offset-1">
+                        <p>Non-dining tickets: £130</p>
+                        <p>Dining tickets: £175</p>
+                        <p>Wadham Ball has now sold out. Fill in your email below to join our waiting list for tickets.</p>
+
+                        @flash.get("success1").map { message =>
+                            <div class="alert-message success">
+                                <strong>@message!</strong>
+                            </div>
+                        }
+
+                        @form(routes.Application.joinWait()) {
+
+                            <fieldset>
+
+                            @inputText(waitingForm("email"), '_label -> "Join our waiting list")
+
+                            </fieldset>
+
+                            <div class="actions">
+                                <input type="submit" value="Join" class="btn btn-info" style="margin: 10px">
+                            </div>
+
+                        }
                     </div>
                 </div>
             </div>

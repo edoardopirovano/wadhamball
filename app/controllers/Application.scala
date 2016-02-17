@@ -3,7 +3,7 @@ package controllers
 import java.sql.Timestamp
 import javax.inject.Inject
 
-import dao.{TicketDAO, EmailsDAO}
+import dao.{WaitDAO, TicketDAO, EmailsDAO}
 import models.{Email, _}
 import org.h2.jdbc.JdbcSQLException
 import play.api._
@@ -19,7 +19,7 @@ import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, Future}
 
 /** Manage a database of computers. */
-class Application @Inject() (emailsDAO: EmailsDAO, ticketDAO: TicketDAO, mailer: Mailer, val messagesApi: MessagesApi) extends Controller with I18nSupport {
+class Application @Inject() (emailsDAO: EmailsDAO, waitDAO: WaitDAO, ticketDAO: TicketDAO, mailer: Mailer, val messagesApi: MessagesApi) extends Controller with I18nSupport {
 
   val Home = Redirect(routes.Application.home())
   val Subscribe = Redirect(routes.Application.subscription())
@@ -27,6 +27,13 @@ class Application @Inject() (emailsDAO: EmailsDAO, ticketDAO: TicketDAO, mailer:
   val ReminderSend = Redirect(routes.Application.sendreminder())
 
   val emailForm = Form(
+    mapping(
+      "email" -> email
+    )
+      ((x:String) => new Email(x, new Timestamp(System.currentTimeMillis())))
+      ((x:Email) => Option(x.email)))
+
+  val waitingForm = Form(
     mapping(
       "email" -> email
     )
@@ -83,7 +90,7 @@ class Application @Inject() (emailsDAO: EmailsDAO, ticketDAO: TicketDAO, mailer:
   def index = Action { Home }
 
   def home = Action.async { implicit rs =>
-    Future { Ok(html.main(emailForm))}
+    Future { Ok(html.main(emailForm, waitingForm))}
   }
 
   def subscription = Action.async { implicit rs =>
@@ -92,13 +99,26 @@ class Application @Inject() (emailsDAO: EmailsDAO, ticketDAO: TicketDAO, mailer:
 
   def subscribe = Action.async { implicit rs =>
     emailForm.bindFromRequest.fold(
-      formWithErrors => Future { BadRequest(html.subscription(formWithErrors)) },
+      formWithErrors => Future { BadRequest(html.main(formWithErrors, waitingForm)) },
       email => {
         try {
           emailsDAO.insert(email)
           Future { Home.flashing("success" -> "Email %s has been added".format(email.email)) }
         } catch {
           case ex: JdbcSQLException => Future { Home.flashing("success" -> "Email %s already present".format(email.email)) }
+        }
+      })
+  }
+
+  def joinWait = Action.async { implicit rs =>
+    waitingForm.bindFromRequest.fold(
+      formWithErrors => Future { BadRequest(html.main(emailForm, formWithErrors)) },
+      email => {
+        try {
+          waitDAO.insert(email)
+          Future { Home.flashing("success1" -> "Email %s has been added".format(email.email)) }
+        } catch {
+          case ex: JdbcSQLException => Future { Home.flashing("success1" -> "Email %s already present".format(email.email)) }
         }
       })
   }
