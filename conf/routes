@@ -8,19 +8,20 @@ GET         /home                      controllers.Application.home
 GET         /paid                      controllers.Payment.paid
 GET         /subscription              controllers.Application.subscription
 GET         /subscribe                 controllers.Application.subscribe
-GET         /joinWait                 controllers.Application.joinWait
+GET         /joinWait                  controllers.Application.joinWait
 POST        /unsubscribe               controllers.Application.unsubscribe(recipient: String)
 GET         /deposit                   controllers.Deposit.deposit
 GET         /wadhambuy                 controllers.Deposit.wadhambuy
-POST        /wadhambuy                 controllers.Deposit.doWadhamBuy
 GET         /tickets                   controllers.Ticketing.buy
-POST        /tickets                   controllers.Ticketing.doBuy
 GET         /settle/:id                controllers.Deposit.settle(id: Int)
-POST        /settle                    controllers.Deposit.doSettle
+GET         /upgrade/:id               controllers.Ticketing.upgrade(id: Int)
+POST        /upgrade                   controllers.Ticketing.doUpgrade
 GET         /admin/sendmail            controllers.Application.sendmail
 POST        /admin/sendnews            controllers.Application.sendnews
 GET         /admin/sendreminder        controllers.Application.getreminder
 POST        /admin/sendreminder        controllers.Application.sendreminder
+GET         /admin/sendupgrade         controllers.Application.getupgrade
+POST        /admin/sendupgrade         controllers.Application.sendupgrade
 GET         /admin/sendconfirmation    controllers.Application.getSendConfirmationPage
 POST        /admin/sendconfirmation    controllers.Application.sendConfirmation
 GET         /favicon.ico               controllers.Assets.at(path="/public", file="favicon.ico")

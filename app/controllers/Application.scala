@@ -25,6 +25,7 @@ class Application @Inject() (emailsDAO: EmailsDAO, waitDAO: WaitDAO, ticketDAO: 
   val Subscribe = Redirect(routes.Application.subscription())
   val EmailSend = Redirect(routes.Application.sendmail())
   val ReminderSend = Redirect(routes.Application.sendreminder())
+  val UpgradeSend = Redirect(routes.Application.sendupgrade())
 
   val emailForm = Form(
     mapping(
@@ -52,6 +53,12 @@ class Application @Inject() (emailsDAO: EmailsDAO, waitDAO: WaitDAO, ticketDAO: 
     )(identity[String])(Option.apply)
   )
 
+  val upgradeApprovalForm = Form(
+    mapping(
+      "confirm" -> nonEmptyText
+    )(identity[String])(Option.apply)
+  )
+
   val reminderEmailSubject = "Ticket Balance Overdue"
 
   val reminderEmailText = StringContext("Hello ", ",<br /><br />" +
@@ -71,6 +78,16 @@ class Application @Inject() (emailsDAO: EmailsDAO, waitDAO: WaitDAO, ticketDAO: 
     "If you have any questions, feel free to send an email to <a href='mailto:ball.president@wadh.ox.ac.uk'>ball.president@wadh.ox.ac.uk</a> for help.<br /><br />" +
     "Best regards,<br />" +
     "Wadham Ball Committee")
+
+  val upgradeEmailText = StringContext("Hello ", ",<br /><br />" +
+    "Out dining option did not sell out so if you're interested you can now upgrade your ticket to a dining one (for £45 + £2 transaction fee) here:<br /><br />" +
+    "<a href='http://wadhamball.co.uk/upgrade/", "'>http://wadhamball.co.uk/upgrade/","</a><br /><br />" +
+    "We look forward to seeing you at Wadham Ball 2016.<br /><br />" +
+    "If you have any questions, feel free to send an email to <a href='mailto:ball.president@wadh.ox.ac.uk'>ball.president@wadh.ox.ac.uk</a> for help.<br /><br />" +
+    "Best regards,<br />" +
+    "Wadham Ball Committee")
+
+  val upgradeEmailSubject = "Wadham Ball 2016 Dining Upgrades"
 
   val confirmationEmailSubject = "Wadham Ball 2016 Ticket Confirmation"
 
@@ -153,6 +170,10 @@ class Application @Inject() (emailsDAO: EmailsDAO, waitDAO: WaitDAO, ticketDAO: 
     Future { Ok(html.sendreminder(reminderApprovalForm)) }
   }
 
+  def getupgrade = Action.async { implicit rs =>
+    Future { Ok(html.sendupgrade(upgradeApprovalForm)) }
+  }
+
   def getSendConfirmationPage = Action.async { implicit rs =>
     Future { Ok(html.sendconfirmation(reminderApprovalForm)) }
   }
@@ -176,6 +197,30 @@ class Application @Inject() (emailsDAO: EmailsDAO, waitDAO: WaitDAO, ticketDAO: 
         else {
           // Not confirmed, redisplay form with flashing failure
           Future { ReminderSend.flashing("failure" -> "Admin did not confirm action") }
+        }
+      }
+    )
+  }
+
+  def sendupgrade = Action.async { implicit rs =>
+    upgradeApprovalForm.bindFromRequest.fold(
+      formWithErrors => Future { BadRequest(html.sendupgrade(formWithErrors)) },
+      confirmationString => {
+        if (confirmationString.equalsIgnoreCase("confirm")) {
+          // Admin has confirmed, lets send some emails
+          val nonDiningTickets = Await.result(ticketDAO.getNonDining, Duration.Inf)
+          val responses = for (ticket <- nonDiningTickets) yield mailer.sendMail(Seq(ticket.email), upgradeEmailSubject, upgradeEmailText.s(ticket.firstName, ticket.id.get, ticket.id.get), false)
+          val response = Await.result(Future.sequence(responses), Duration.Inf)
+          val errors = response.zipWithIndex.collect { case (false, i) => s"""Error sending reminder for ticket ${nonDiningTickets(i)}""" }
+          if (errors.nonEmpty) {
+            errors.foreach(err => Logger.error(err))
+            Future { UpgradeSend.flashing("failure" -> "Failed to send some reminders - see logs.") }
+          }
+          else Future { UpgradeSend.flashing("success" -> "Message sent") }
+        }
+        else {
+          // Not confirmed, redisplay form with flashing failure
+          Future { UpgradeSend.flashing("failure" -> "Admin did not confirm action") }
         }
       }
     )

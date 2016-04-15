@@ -7,7 +7,7 @@ case class Email(email: String, joinDate: Timestamp)
 
 case class SendEmail(subject: String, content: String)
 
-case class Ticket(id: Option[Long], firstName: String, lastName: String, email: String, depositTransaction: Option[String], finalTransaction: Option[String], isDining: Option[Boolean], donation: Long)
+case class Ticket(id: Option[Long], firstName: String, lastName: String, email: String, depositTransaction: Option[String], finalTransaction: Option[String], isDining: Option[Boolean], donation: Long, upgradeTransaction: Option[String])
 
 case class Registration(firstName: String, lastName: String, email:String, isWadham: Boolean, numberOfGuests: Int)
 

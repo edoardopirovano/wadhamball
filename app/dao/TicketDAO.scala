@@ -21,7 +21,8 @@ trait TicketComponent { self: HasDatabaseConfigProvider[JdbcProfile] =>
     def finalTransaction = column[Option[String]]("FINALTRANSACTION")
     def isDining = column[Option[Boolean]]("ISDINING")
     def donation = column[Long]("DONATION")
-    def * = (id.?, firstName, lastName, email, depositTransaction, finalTransaction, isDining, donation) <> (Ticket.tupled, Ticket.unapply)
+    def upgradeTransaction = column[Option[String]]("UPGRADETRANSACTION")
+    def * = (id.?, firstName, lastName, email, depositTransaction, finalTransaction, isDining, donation, upgradeTransaction) <> (Ticket.tupled, Ticket.unapply)
   }
 }
 
@@ -81,4 +82,10 @@ with HasDatabaseConfigProvider[JdbcProfile] {
 
   def makeDining(id: Long): Future[Unit] =
     db.run((for { t <- tickets if t.id === id } yield t.isDining).update(Some(true)).map(_ => ()))
+
+  def upgradeDining(id: Long, transaction: String): Future[Unit] =
+    db.run((for { t <- tickets if t.id === id } yield (t.isDining, t.upgradeTransaction)).update((Some(true), Some(transaction))).map(_ => ()))
+
+  def getNonDining: Future[Seq[Ticket]] =
+    db.run(tickets.filter(!_.isDining).result)
 }

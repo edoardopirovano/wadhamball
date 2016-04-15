@@ -1,4 +1,4 @@
-@(settleForm: Form[UpgradeForm], clientToken: String, didFail: Boolean, clientString: Option[String], upgradeAvailable: Boolean, alreadyPaid: Boolean, id: Long)(implicit flash: play.api.mvc.Flash, messages: Messages)
+@(upgradeForm: Form[UpgradeForm], clientToken: String, failure: Option[String], clientString: Option[String], upgradeAvailable: Boolean, alreadyUpgraded: Boolean, id: Long)(implicit flash: play.api.mvc.Flash)
 
 @import helper._
 
@@ -8,11 +8,11 @@
 
     <div class="container">
 
-        <h1>Presale Tickets for Wadham Students</h1>
+        <h1>Dining Upgrade Sale</h1>
 
-        @if(didFail) {
+        @if(failure.isDefined) {
             <div class="alert-message warning">
-                <strong>There was an error processing your transaction, please try again later!</strong>
+                <strong>@failure.get</strong>
             </div>
         }
 
@@ -24,12 +24,12 @@
             </div>
         } else {
             <p>You are paying for: <b>@clientString.get</b></p>
-            @if(alreadyPaid) {
+            @if(alreadyUpgraded) {
                 <div class="alert-message warning">
-                    <strong>This ticket has already been fully paid!</strong>
+                    <strong>This ticket has already been upgraded!</strong>
                 </div>
             } else {
-                form(routes.Ticketing.doUpgrade()) {
+                @form(routes.Ticketing.doUpgrade()) {
 
                     <fieldset>
                         <input type="hidden" name="id" value="@id">
