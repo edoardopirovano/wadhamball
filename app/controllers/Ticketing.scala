@@ -155,6 +155,8 @@ class Ticketing @Inject() (ticketDAO: TicketDAO, mailer: Mailer, val braintree: 
         if (Await.result(isDining, Duration.Inf))
           error = Some("Ticket is already a dining ticket.")
 
+        error = Some("Dining upgrades are no longer on sale.")
+
         if (error.isEmpty) braintree.doTransaction(diningFee, upgradeRequest.payment_method_nonce) match {
           case Some(transactionId) =>
             val name = ticketDAO.getName(upgradeRequest.id)

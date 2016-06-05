@@ -16,41 +16,8 @@
             </div>
         }
 
-        <p>You can upgrade your ticket to a dining one for £45 (plus a £2 transaction fee) here.</p>
+        <p>Dining upgrades are no longer on sale.</p>
 
-        @if(clientString.isEmpty) {
-            <div class="alert-message warning">
-                <strong>The link you followed appears to be invalid, please follow use link in the email you received!</strong>
-            </div>
-        } else {
-            <p>You are paying for: <b>@clientString.get</b></p>
-            @if(alreadyUpgraded) {
-                <div class="alert-message warning">
-                    <strong>This ticket has already been upgraded!</strong>
-                </div>
-            } else {
-                @form(routes.Ticketing.doUpgrade()) {
-
-                    <fieldset>
-                        <input type="hidden" name="id" value="@id">
-                        <div id="payment-form"></div>
-                    </fieldset>
-
-                    <div class="actions input-group">
-                        <input type="submit" value="Upgrade (£47)" class="btn primary" style="margin-right: 150px">
-                    </div>
-
-                    <small>Payment processing powered by <a href="https://www.braintreepayments.com/">Braintree</a>.</small>
-
-                    <script src="https://js.braintreegateway.com/v2/braintree.js"></script>
-                    <script>
-                            braintree.setup("@clientToken", "dropin", {
-                              container: "payment-form"
-                            });
-                            </script>
-                }
-            }
-        }
     </div>
 
 }
