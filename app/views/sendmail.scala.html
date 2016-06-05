@@ -29,6 +29,7 @@
         }
         @form(routes.Application.sendnews()) {
             @inputText(emailForm("subject"), '_label -> "Subject")
+            @checkbox(emailForm("dinersonly"), '_label -> "Diners only?")
             @textarea(emailForm("content"), '_label -> "Content")
             <div class="actions">
                 <input type="submit" value="Send Email" class="btn primary">

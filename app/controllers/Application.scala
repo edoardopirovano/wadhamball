@@ -44,7 +44,8 @@ class Application @Inject() (emailsDAO: EmailsDAO, waitDAO: WaitDAO, ticketDAO: 
   val emailSendForm = Form(
     mapping(
       "subject" -> nonEmptyText(1, 100),
-      "content" -> nonEmptyText
+      "content" -> nonEmptyText,
+      "dinersonly" -> boolean
     )(SendEmail.apply)(SendEmail.unapply))
 
   val reminderApprovalForm = Form(
@@ -153,15 +154,29 @@ class Application @Inject() (emailsDAO: EmailsDAO, waitDAO: WaitDAO, ticketDAO: 
     emailSendForm.bindFromRequest.fold(
       formWithErrors => Future { BadRequest(html.sendmail(formWithErrors)) },
       emailRequest => {
-        val mailingListEmails = emailsDAO.getAll
-        val ticketEmails = ticketDAO.getEmails
-        val allEmails = Await.result(mailingListEmails, Duration.Inf).toSet.union(Await.result(ticketEmails, Duration.Inf).toSet)
+        val allEmails =
+          if (emailRequest.dinersonly) {
+            val dinerEmails = ticketDAO.getDiningEmails
+            val allEmails = Await.result(dinerEmails, Duration.Inf).toSet
+            allEmails
+          }
+          else {
+            val mailingListEmails = emailsDAO.getAll
+            val ticketEmails = ticketDAO.getEmails
+            val allEmails = Await.result(mailingListEmails, Duration.Inf).toSet.union(Await.result(ticketEmails, Duration.Inf).toSet)
+            allEmails
+          }
         val response = mailer.sendMail(allEmails.toSeq, emailRequest.subject, emailRequest.content, true)
+
         if (!Await.result(response, Duration.Inf)) {
           Logger.error("Failed to send an email!")
-          Future { EmailSend.flashing("failure" -> "Message failed to send") }
+          Future {
+            EmailSend.flashing("failure" -> "Message failed to send")
+          }
         }
-        else Future { EmailSend.flashing("success" -> "Message sent") }
+        else Future {
+          EmailSend.flashing("success" -> "Message sent")
+        }
       }
     )
   }

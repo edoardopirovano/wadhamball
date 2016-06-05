@@ -5,9 +5,9 @@ import java.sql.Timestamp
 case class Email(email: String, joinDate: Timestamp)
 //case class SendRequest(id: Option[Long], subject: String, content: String, email: String, approvalId: String, sent: Boolean)
 
-case class SendEmail(subject: String, content: String)
+case class SendEmail(subject: String, content: String, dinersonly: Boolean)
 
-case class Ticket(id: Option[Long], firstName: String, lastName: String, email: String, depositTransaction: Option[String], finalTransaction: Option[String], isDining: Option[Boolean], donation: Long, upgradeTransaction: Option[String])
+case class Ticket(id: Option[Long], firstName: String, lastName: String, email: String, depositTransaction: Option[String], finalTransaction: Option[String], isDining: Boolean, donation: Long, upgradeTransaction: Option[String])
 
 case class Registration(firstName: String, lastName: String, email:String, isWadham: Boolean, numberOfGuests: Int)
 

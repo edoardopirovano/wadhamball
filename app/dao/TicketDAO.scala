@@ -19,7 +19,7 @@ trait TicketComponent { self: HasDatabaseConfigProvider[JdbcProfile] =>
     def email = column[String]("EMAIL")
     def depositTransaction = column[Option[String]]("DEPOSITTRANSACTION")
     def finalTransaction = column[Option[String]]("FINALTRANSACTION")
-    def isDining = column[Option[Boolean]]("ISDINING")
+    def isDining = column[Boolean]("ISDINING")
     def donation = column[Long]("DONATION")
     def upgradeTransaction = column[Option[String]]("UPGRADETRANSACTION")
     def * = (id.?, firstName, lastName, email, depositTransaction, finalTransaction, isDining, donation, upgradeTransaction) <> (Ticket.tupled, Ticket.unapply)
@@ -45,6 +45,9 @@ with HasDatabaseConfigProvider[JdbcProfile] {
 
   def getEmails: Future[Seq[String]] =
     db.run(tickets.map(_.email).result)
+
+  def getDiningEmails: Future[Seq[String]] =
+    db.run(tickets.filter(_.isDining).map(_.email).result)
 
   def getUnpaid: Future[Seq[Ticket]] =
     db.run(tickets.filter(_.finalTransaction.isEmpty).result)
@@ -81,10 +84,10 @@ with HasDatabaseConfigProvider[JdbcProfile] {
     db.run((for { t <- tickets if t.id === id } yield t.finalTransaction).update(Some(transaction))).map(_ => ())
 
   def makeDining(id: Long): Future[Unit] =
-    db.run((for { t <- tickets if t.id === id } yield t.isDining).update(Some(true)).map(_ => ()))
+    db.run((for { t <- tickets if t.id === id } yield t.isDining).update(true).map(_ => ()))
 
   def upgradeDining(id: Long, transaction: String): Future[Unit] =
-    db.run((for { t <- tickets if t.id === id } yield (t.isDining, t.upgradeTransaction)).update((Some(true), Some(transaction))).map(_ => ()))
+    db.run((for { t <- tickets if t.id === id } yield (t.isDining, t.upgradeTransaction)).update((true, Some(transaction))).map(_ => ()))
 
   def getNonDining: Future[Seq[Ticket]] =
     db.run(tickets.filter(!_.isDining).result)
